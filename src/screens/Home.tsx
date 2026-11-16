@@ -1,6 +1,6 @@
 import { Plus } from "../components/Icons";
 import { Page, Rise } from "../components/Page";
-import { PHOTO_FOCUS, photoUrl } from "../content/photos";
+import { isPhoto, PHOTO_FOCUS, photoUrl } from "../content/photos";
 import { TRANSLATION, verseOfTheDay } from "../content/verses";
 import { useApp } from "../lib/store";
 import type { Session } from "../lib/types";
@@ -18,6 +18,8 @@ function when(session: Session): string {
   if (days < 2) return "Yesterday";
   return new Date(session.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
+
+const artFor = (session: Session) => (isPhoto(session.photo) ? session.photo : session.theme);
 
 export function Home() {
   const sessions = useApp((s) => s.sessions);
@@ -81,8 +83,7 @@ export function Home() {
                 {sessions.map((session) => (
                   <button key={session.id} className="moment" onClick={() => open(session)}>
                     <span className="moment__art">
-                      <img src={`/media/${session.scene}.jpg`} alt="" loading="lazy" />
-                      <img src={photoUrl(session.theme)} style={{ objectPosition: PHOTO_FOCUS[session.theme] }} alt="" loading="lazy" />
+                      <img src={photoUrl(artFor(session))} style={{ objectPosition: PHOTO_FOCUS[artFor(session)] }} alt="" loading="lazy" />
                     </span>
                     <span className="moment__text">
                       <strong>{session.title}</strong>

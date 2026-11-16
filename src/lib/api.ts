@@ -1,5 +1,5 @@
 import { composeLocally } from "../content/compose";
-import type { Capabilities, ComposeRequest, SegmentKind, Session, VoiceId } from "./types";
+import type { Capabilities, ComposeRequest, Mode, SegmentKind, Session, VoiceId } from "./types";
 
 export interface SpokenSegment {
   audio: string;
@@ -26,11 +26,11 @@ export async function composeSession(req: ComposeRequest): Promise<Session> {
   const caps = await getCapabilities();
   if (!caps.compose) return composeLocally(req);
   try {
-    return await request<Session>("/api/compose", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(req),
-    });
+    return await request<Session>(
+      "/api/compose",
+      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(req) },
+      90_000, // a long vision can take a while to write
+    );
   } catch {
     return composeLocally(req);
   }
@@ -47,8 +47,8 @@ const AUDIO_CACHE = "liora-voice-v3";
  * Spoken audio for one segment. Kept in Cache Storage so a saved session
  * replays offline and is never synthesised (or billed) twice.
  */
-export async function speakSegment(lines: string[], voice: VoiceId, context: { kind?: SegmentKind; before?: string; after?: string } = {}): Promise<SpokenSegment> {
-  const key = `/voice-cache/${await digest(`${voice}\n${lines.join("\n")}`)}`;
+export async function speakSegment(lines: string[], voice: VoiceId, context: { mode?: Mode; kind?: SegmentKind; before?: string; after?: string } = {}): Promise<SpokenSegment> {
+  const key = `/voice-cache/${await digest(`${voice}\n${context.mode ?? ""}\n${lines.join("\n")}`)}`;
   const cache = "caches" in window ? await caches.open(AUDIO_CACHE).catch(() => undefined) : undefined;
   const hit = await cache?.match(key);
   if (hit) return (await hit.json()) as SpokenSegment;

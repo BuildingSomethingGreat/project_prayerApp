@@ -76,3 +76,10 @@ export const Waves = (p: P) => (
     <path d="M4 7.500c2.200 0 2.200-2 4.400-2s2.200 2 4.400 2 2.200-2 4.400-2 2.200 2 2.800 2" opacity=".55" />
   </Icon>
 );
+
+/** Show the words. */
+export const Words = (p: P) => (
+  <Icon {...p}>
+    <path d="M5 7.5h14M5 12h14M5 16.500h9" />
+  </Icon>
+);

@@ -1,4 +1,4 @@
-import type { SegmentKind, VoiceId } from "../src/lib/types.ts";
+import type { Mode, SegmentKind, VoiceId } from "../src/lib/types.ts";
 
 /**
  * Voice synthesis through ElevenLabs. Each of Liora's three voices maps to an
@@ -27,16 +27,39 @@ const MODELS = process.env.ELEVENLABS_MODEL ? [process.env.ELEVENLABS_MODEL] : [
 const directable = (model: string) => model.startsWith("eleven_v3");
 
 /**
- * How each part of a session should be spoken. On a directable model these are
- * sent as cues ahead of the words; they are never shown or spoken.
+ * How each part of each kind of session should be spoken. On a directable
+ * model these are sent as cues ahead of the words; they are never shown or spoken.
  */
-const DIRECTION: Record<SegmentKind, string> = {
-  arrive: "[warmly] [softly, like a close friend sitting beside her]",
-  scripture: "[gently] [with quiet reverence]",
-  reflect: "[warmly] [thoughtful, conversational]",
-  pray: "[softly] [tenderly, praying with a friend]",
-  declare: "[warmly] [encouraging]",
-  bless: "[softly] [smiling]",
+const DIRECTION: Record<Mode, Record<SegmentKind, string>> = {
+  prayer: {
+    arrive: "[warmly] [softly, like a close friend sitting beside her]",
+    scripture: "[gently] [with quiet reverence]",
+    reflect: "[warmly] [thoughtful, conversational]",
+    story: "[warmly] [storytelling]",
+    pray: "[softly] [tenderly, praying with a friend]",
+    declare: "[warmly] [encouraging]",
+    bless: "[softly] [smiling]",
+  },
+  // Strength without shouting: the authority is in the steadiness.
+  warfare: {
+    arrive: "[steady] [confident, rallying a friend before a fight]",
+    scripture: "[bold] [with weight and conviction]",
+    reflect: "[firm] [assured, unhurried]",
+    story: "[firm] [assured]",
+    pray: "[bold] [fervent, with rising authority and conviction]",
+    declare: "[strong] [emphatic, each line landing]",
+    bless: "[warmly] [resolute]",
+  },
+  // A storyteller drawing her into a scene.
+  vision: {
+    arrive: "[hushed] [inviting, drawing her in]",
+    scripture: "[gently] [with wonder]",
+    reflect: "[warmly] [thoughtful]",
+    story: "[cinematic] [vivid, immersive storytelling, slow and full of wonder]",
+    pray: "[softly] [tender, surrendered]",
+    declare: "[warmly] [confident, joyful]",
+    bless: "[softly] [smiling]",
+  },
 };
 
 /** Settings for the fallback model: lower stability lets pitch and pace move; a little style adds warmth. */
@@ -80,7 +103,8 @@ export function canSpeak(): boolean {
 }
 
 export interface SpeechContext {
-  /** Which part of the session this is, to choose how it is spoken. */
+  /** Which kind of session and which part of it this is, to choose how it is spoken. */
+  mode?: Mode;
   kind?: SegmentKind;
   /** What was said just before these lines, and what comes just after. Not spoken; it shapes the intonation. */
   before?: string;
@@ -120,7 +144,7 @@ export async function speak(lines: string[], voice: VoiceId, context: SpeechCont
     // across them as a person speaking would. Record where each line begins, to
     // read its start time off the alignment.
     const offsets: number[] = [];
-    let text = directable(model) && context.kind ? `${DIRECTION[context.kind]} ` : "";
+    let text = directable(model) && context.kind ? `${DIRECTION[context.mode ?? "prayer"][context.kind]} ` : "";
     for (const [i, line] of lines.entries()) {
       if (i) text += " ";
       offsets.push(text.length);

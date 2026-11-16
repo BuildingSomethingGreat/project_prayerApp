@@ -4,7 +4,7 @@
 
 Every photograph in `public/media/photos/` is released under **CC0 (public domain)** and was found through the [Openverse](https://openverse.org) open-licence search, filtered to CC0 works from StockSnap and rawpixel. CC0 needs no attribution; the photographers are listed here out of gratitude, and so each image can be traced.
 
-Pinterest and Unsplash were considered and not used: Pinterest images belong to whoever made them and carry no licence to reuse, and Unsplash does not allow automated download.
+Pinterest and Unsplash were considered and not used: Pinterest images belong to whoever made them and carry no licence to reuse, and Unsplash does not allow automated download. The landscapes were chosen to match reference images supplied for the project (a wildflower meadow at sunset, a grainy black-and-white waterfall, sunlight through a forest).
 
 | File | Title at source | Photographer | Source | Link |
 | --- | --- | --- | --- | --- |
@@ -23,6 +23,17 @@ Pinterest and Unsplash were considered and not used: Pinterest images belong to 
 | `open-hands.jpg` | Woman's hand open prayer | — | rawpixel | [view](https://www.rawpixel.com/image/6023759/photo-image-public-domain-hand-person) |
 | `scripture.jpg` | Free praying hands open book | — | rawpixel | [view](https://www.rawpixel.com/image/5906236/photo-image-book-public-domain-hands) |
 | `quiet-place.jpg` | Highland Mountain | Konstantin Kopachinsky | stocksnap | [view](https://stocksnap.io/photo/highland-mountain-T8YE0WOKIY) |
+| `meadow.jpg` | Summer Meadow | Bonnie Moreland | stocksnap | [view](https://stocksnap.io/photo/summer-meadow-S1U6OAIZZK) |
+| `forest-light.jpg` | Sunrays Sunlight | Blake Verdoorn | stocksnap | [view](https://stocksnap.io/photo/sunrays-sunlight-3NJJ3EY8MM) |
+| `forest-path.jpg` | Dirt Road | Patrick Fore | stocksnap | [view](https://stocksnap.io/photo/dirt-road-SQY05ME36U) |
+| `rays.jpg` | Sunrise Dawn | Kristine Weilert | stocksnap | [view](https://stocksnap.io/photo/sunrise-dawn-OUK7YT8KN5) |
+| `waterfall.jpg` | Waterfall Splash (shown in black and white) | Travel Coffee Book | stocksnap | [view](https://stocksnap.io/photo/waterfall-splash-F3F0F1F1FD) |
+| `storm.jpg` | Storm Clouds | Free Nature Stock | stocksnap | [view](https://stocksnap.io/photo/storm-clouds-KRZSQKJRCT) |
+| `mountain-sunrise.jpg` | Sun Sunset | Stefan Kunze | stocksnap | [view](https://stocksnap.io/photo/sun-sunset-Q9JZU4XLNV) |
+| `wildflowers.jpg` | Flowers Field | Elijah Hail | stocksnap | [view](https://stocksnap.io/photo/flowers-field-Z4ZNUB0SFI) |
+| `ocean.jpg` | Ocean Wave | Altered Reality | stocksnap | [view](https://stocksnap.io/photo/ocean-wave-VFAMQON3ZP) |
+| `fjord.jpg` | Mountain Mist (shown in black and white) | Joe deSousa | stocksnap | [view](https://stocksnap.io/photo/mountain-mist-KWBS8UPUNJ) |
+| `grass-sun.jpg` | Nature Grasslands | Ruben Engel | stocksnap | [view](https://stocksnap.io/photo/nature-grasslands-UZA0RPPQY4) |
 
 Before launch, open each link and confirm the licence shown there is still CC0, and consider commissioning or licensing a consistent set of photographs made for Liora.
 

@@ -81,7 +81,8 @@
       "text": "For I know the thoughts that I think towards you,” says the LORD, “thoughts of peace, and not of evil, to give you hope and a future.",
       "themes": [
         "purpose",
-        "hope"
+        "hope",
+        "vision"
       ]
     },
     {
@@ -90,7 +91,8 @@
       "text": "Commit your deeds to the LORD, and your plans shall succeed.",
       "themes": [
         "purpose",
-        "guidance"
+        "guidance",
+        "vision"
       ]
     },
     {
@@ -108,7 +110,8 @@
       "text": "being confident of this very thing, that he who began a good work in you will complete it until the day of Jesus Christ.",
       "themes": [
         "purpose",
-        "hope"
+        "hope",
+        "vision"
       ]
     },
     {
@@ -117,7 +120,8 @@
       "text": "Also delight yourself in the LORD, and he will give you the desires of your heart. Commit your way to the LORD. Trust also in him, and he will do this:",
       "themes": [
         "purpose",
-        "provision"
+        "provision",
+        "vision"
       ]
     },
     {
@@ -135,7 +139,8 @@
       "text": "Don’t you be afraid, for I am with you. Don’t be dismayed, for I am your God. I will strengthen you. Yes, I will help you. Yes, I will uphold you with the right hand of my righteousness.",
       "themes": [
         "strength",
-        "courage"
+        "courage",
+        "warfare"
       ]
     },
     {
@@ -162,7 +167,8 @@
       "text": "Haven’t I commanded you? Be strong and courageous. Don’t be afraid. Don’t be dismayed, for the LORD your God is with you wherever you go.”",
       "themes": [
         "courage",
-        "strength"
+        "strength",
+        "warfare"
       ]
     },
     {
@@ -378,7 +384,8 @@
       "text": "Behold, I will do a new thing. It springs out now. Don’t you know it? I will even make a way in the wilderness, and rivers in the desert.",
       "themes": [
         "hope",
-        "purpose"
+        "purpose",
+        "vision"
       ]
     },
     {
@@ -387,7 +394,8 @@
       "text": "For God didn’t give us a spirit of fear, but of power, love, and self-control.",
       "themes": [
         "courage",
-        "strength"
+        "strength",
+        "warfare"
       ]
     },
     {
@@ -396,7 +404,8 @@
       "text": "The LORD himself is who goes before you. He will be with you. He will not fail you nor forsake you. Don’t be afraid. Don’t be discouraged.”",
       "themes": [
         "courage",
-        "comfort"
+        "comfort",
+        "warfare"
       ]
     },
     {
@@ -406,6 +415,232 @@
       "themes": [
         "courage",
         "peace"
+      ]
+    },
+    {
+      "id": "ephesians-6-10-13",
+      "ref": "Ephesians 6:10-13",
+      "text": "Finally, be strong in the Lord and in the strength of his might. Put on the whole armour of God, that you may be able to stand against the wiles of the devil. For our wrestling is not against flesh and blood, but against the principalities, against the powers, against the world’s rulers of the darkness of this age, and against the spiritual forces of wickedness in the heavenly places. Therefore put on the whole armour of God, that you may be able to withstand in the evil day, and having done all, to stand.",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "2-corinthians-10-4-5",
+      "ref": "2 Corinthians 10:4-5",
+      "text": "for the weapons of our warfare are not of the flesh, but mighty before God to the throwing down of strongholds, throwing down imaginations and every high thing that is exalted against the knowledge of God and bringing every thought into captivity to the obedience of Christ,",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "james-4-7",
+      "ref": "James 4:7",
+      "text": "Be subject therefore to God. Resist the devil, and he will flee from you.",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "isaiah-54-17",
+      "ref": "Isaiah 54:17",
+      "text": "No weapon that is formed against you will prevail; and you will condemn every tongue that rises against you in judgement. This is the heritage of the LORD’s servants, and their righteousness is of me,” says the LORD.",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "luke-10-19",
+      "ref": "Luke 10:19",
+      "text": "Behold, I give you authority to tread on serpents and scorpions, and over all the power of the enemy. Nothing will in any way hurt you.",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "1-john-4-4",
+      "ref": "1 John 4:4",
+      "text": "You are of God, little children, and have overcome them, because greater is he who is in you than he who is in the world.",
+      "themes": [
+        "warfare",
+        "courage"
+      ]
+    },
+    {
+      "id": "romans-8-37",
+      "ref": "Romans 8:37",
+      "text": "No, in all these things we are more than conquerors through him who loved us.",
+      "themes": [
+        "warfare",
+        "strength"
+      ]
+    },
+    {
+      "id": "romans-8-31",
+      "ref": "Romans 8:31",
+      "text": "What then shall we say about these things? If God is for us, who can be against us?",
+      "themes": [
+        "warfare",
+        "courage"
+      ]
+    },
+    {
+      "id": "psalm-91-1-4",
+      "ref": "Psalm 91:1-4",
+      "text": "He who dwells in the secret place of the Most High will rest in the shadow of the Almighty. I will say of the LORD, “He is my refuge and my fortress; my God, in whom I trust.” For he will deliver you from the snare of the fowler, and from the deadly pestilence. He will cover you with his feathers. Under his wings you will take refuge. His faithfulness is your shield and rampart.",
+      "themes": [
+        "warfare",
+        "rest"
+      ]
+    },
+    {
+      "id": "2-chronicles-20-15",
+      "ref": "2 Chronicles 20:15",
+      "text": "and he said, “Listen, all Judah, and you inhabitants of Jerusalem, and you, King Jehoshaphat. The LORD says to you, ‘Don’t be afraid, and don’t be dismayed because of this great multitude; for the battle is not yours, but God’s.",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "exodus-14-14",
+      "ref": "Exodus 14:14",
+      "text": "The LORD will fight for you, and you shall be still.”",
+      "themes": [
+        "warfare",
+        "peace"
+      ]
+    },
+    {
+      "id": "colossians-2-15",
+      "ref": "Colossians 2:15",
+      "text": "Having stripped the principalities and the powers, he made a show of them openly, triumphing over them in it.",
+      "themes": [
+        "warfare"
+      ]
+    },
+    {
+      "id": "psalm-18-2",
+      "ref": "Psalm 18:2",
+      "text": "The LORD is my rock, my fortress, and my deliverer; my God, my rock, in whom I take refuge; my shield, and the horn of my salvation, my high tower.",
+      "themes": [
+        "warfare",
+        "strength"
+      ]
+    },
+    {
+      "id": "zechariah-4-6",
+      "ref": "Zechariah 4:6",
+      "text": "Then he answered and spoke to me, saying, “This is the LORD’s word to Zerubbabel, saying, ‘Not by might, nor by power, but by my Spirit,’ says the LORD of Armies.",
+      "themes": [
+        "warfare",
+        "strength"
+      ]
+    },
+    {
+      "id": "psalm-46-1",
+      "ref": "Psalm 46:1",
+      "text": "God is our refuge and strength, a very present help in trouble.",
+      "themes": [
+        "warfare",
+        "comfort"
+      ]
+    },
+    {
+      "id": "habakkuk-2-2-3",
+      "ref": "Habakkuk 2:2-3",
+      "text": "The LORD answered me, “Write the vision, and make it plain on tablets, that he who runs may read it. For the vision is yet for the appointed time, and it hurries towards the end, and won’t prove false. Though it takes time, wait for it, because it will surely come. It won’t delay.",
+      "themes": [
+        "vision",
+        "hope"
+      ]
+    },
+    {
+      "id": "ephesians-3-20",
+      "ref": "Ephesians 3:20",
+      "text": "Now to him who is able to do exceedingly abundantly above all that we ask or think, according to the power that works in us,",
+      "themes": [
+        "vision",
+        "purpose"
+      ]
+    },
+    {
+      "id": "hebrews-11-1",
+      "ref": "Hebrews 11:1",
+      "text": "Now faith is assurance of things hoped for, proof of things not seen.",
+      "themes": [
+        "vision",
+        "hope"
+      ]
+    },
+    {
+      "id": "psalm-126-1-3",
+      "ref": "Psalm 126:1-3",
+      "text": "When the LORD brought back those who returned to Zion, we were like those who dream. Then our mouth was filled with laughter, and our tongue with singing. Then they said amongst the nations, “The LORD has done great things for them.” The LORD has done great things for us, and we are glad.",
+      "themes": [
+        "vision",
+        "gratitude"
+      ]
+    },
+    {
+      "id": "joel-2-25-26",
+      "ref": "Joel 2:25-26",
+      "text": "I will restore to you the years that the swarming locust has eaten, the great locust, the grasshopper, and the caterpillar, my great army, which I sent amongst you. You will have plenty to eat and be satisfied, and will praise the name of the LORD, your God, who has dealt wondrously with you; and my people will never again be disappointed.",
+      "themes": [
+        "vision",
+        "hope"
+      ]
+    },
+    {
+      "id": "isaiah-60-1",
+      "ref": "Isaiah 60:1",
+      "text": "“Arise, shine; for your light has come, and the LORD’s glory has risen on you!",
+      "themes": [
+        "vision",
+        "purpose"
+      ]
+    },
+    {
+      "id": "psalm-23-5-6",
+      "ref": "Psalm 23:5-6",
+      "text": "You prepare a table before me in the presence of my enemies. You anoint my head with oil. My cup runs over. Surely goodness and loving kindness shall follow me all the days of my life, and I will dwell in the LORD’s house forever.",
+      "themes": [
+        "vision",
+        "provision"
+      ]
+    },
+    {
+      "id": "numbers-23-19",
+      "ref": "Numbers 23:19",
+      "text": "God is not a man, that he should lie, nor a son of man, that he should repent. Has he said, and he won’t do it? Or has he spoken, and he won’t make it good?",
+      "themes": [
+        "vision",
+        "hope"
+      ]
+    },
+    {
+      "id": "mark-11-24",
+      "ref": "Mark 11:24",
+      "text": "Therefore I tell you, all things whatever you pray and ask for, believe that you have received them, and you shall have them.",
+      "themes": [
+        "vision"
+      ]
+    },
+    {
+      "id": "psalm-20-4",
+      "ref": "Psalm 20:4",
+      "text": "May he grant you your heart’s desire, and fulfil all your counsel.",
+      "themes": [
+        "vision",
+        "purpose"
+      ]
+    },
+    {
+      "id": "jeremiah-33-3",
+      "ref": "Jeremiah 33:3",
+      "text": "‘Call to me, and I will answer you, and will show you great and difficult things, which you don’t know.’",
+      "themes": [
+        "vision",
+        "guidance"
       ]
     }
   ]

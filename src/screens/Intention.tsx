@@ -1,11 +1,12 @@
 import { useRef } from "react";
 import { ChevronLeft } from "../components/Icons";
 import { Page, Rise } from "../components/Page";
+import { MODES, MODE_BY_ID } from "../content/modes";
 import { PROMPT_CHIPS, THEME_BY_ID } from "../content/themes";
 import { useApp } from "../lib/store";
 import type { ThemeId } from "../lib/types";
 
-const MAX = 1200;
+const MAX = 2400;
 
 export function Intention() {
   const intention = useApp((s) => s.intention);
@@ -13,6 +14,8 @@ export function Intention() {
   const hasHistory = useApp((s) => s.sessions.length > 0);
   const setIntention = useApp((s) => s.setIntention);
   const go = useApp((s) => s.go);
+  const mode = useApp((s) => s.mode);
+  const copy = MODE_BY_ID[mode];
   const field = useRef<HTMLTextAreaElement>(null);
 
   // A chip is a way in, not a category: it starts the sentence and leaves the rest to her.
@@ -28,7 +31,14 @@ export function Intention() {
     });
   };
 
-  const ready = intention.trim().length >= 3 || Boolean(themeHint);
+  // A prayer can start from a chip alone; a vision needs something to see.
+  const ready = mode === "prayer" ? intention.trim().length >= 3 || Boolean(themeHint) : mode === "warfare" ? true : intention.trim().length >= 10;
+
+  const switchMode = (next: typeof mode) => {
+    // A chip's starter sentence belongs to prayer; don't carry it into another kind of moment.
+    const starter = PROMPT_CHIPS.some((chip) => THEME_BY_ID[chip].starter === intention);
+    useApp.setState({ mode: next, ...(starter ? { intention: "", themeHint: undefined } : {}) });
+  };
 
   return (
     <Page>
@@ -44,11 +54,18 @@ export function Intention() {
 
       <div className="split">
         <Rise className="split__lead">
-          <h1 className="display">
-            What's on
-            <span>your heart?</span>
+          <div className="modes" role="radiogroup" aria-label="What kind of moment">
+            {MODES.map((m) => (
+              <button key={m.id} className="mode" role="radio" aria-checked={mode === m.id} onClick={() => switchMode(m.id)}>
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <h1 className="display" key={mode}>
+            {copy.lead}
+            <span>{copy.rest}</span>
           </h1>
-          <p className="lede wide-only">Write as much or as little as you like. Liora will shape a moment of prayer around it.</p>
+          <p className="lede">{copy.lede}</p>
         </Rise>
 
         <div className="split__body">
@@ -56,17 +73,19 @@ export function Intention() {
             <label className="sr-only" htmlFor="intention">
               What's on your heart?
             </label>
-            <textarea id="intention" ref={field} value={intention} maxLength={MAX} placeholder="A worry, a dream, a name, a thank-you…" onChange={(e) => setIntention(e.target.value)} />
+            <textarea id="intention" ref={field} value={intention} maxLength={MAX} placeholder={copy.placeholder} onChange={(e) => setIntention(e.target.value)} />
             <small>Only used to write your prayer.</small>
           </Rise>
 
-          <Rise delay={0.16} className="chips">
-            {PROMPT_CHIPS.map((id) => (
-              <button key={id} className="chip" aria-pressed={themeHint === id} onClick={() => choose(id)}>
-                {THEME_BY_ID[id].label}
-              </button>
-            ))}
-          </Rise>
+          {mode === "prayer" && (
+            <Rise delay={0.16} className="chips">
+              {PROMPT_CHIPS.map((id) => (
+                <button key={id} className="chip" aria-pressed={themeHint === id} onClick={() => choose(id)}>
+                  {THEME_BY_ID[id].label}
+                </button>
+              ))}
+            </Rise>
+          )}
 
           <div className="spacer" />
           <button className="btn" disabled={!ready} onClick={() => go("voice")}>

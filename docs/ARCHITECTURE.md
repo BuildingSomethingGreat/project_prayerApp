@@ -38,9 +38,7 @@ This also means the built app can be dropped on static hosting with no server an
 
 ## A session
 
-A `Session` (see `src/lib/types.ts`) is a short album. Its `segments` are the tracks:
-
-`Arrive → Scripture → Reflect → Pray → (Speak life → Scripture) → Go gently`
+A `Session` (see `src/lib/types.ts`) is a short album. Its `segments` are the tracks. It has a `mode` (`prayer`, `warfare` or `vision`), which decides its shape, its verses, how it is voiced, its music and its photograph; the shapes are set out in [CONTENT.md](CONTENT.md#three-kinds-of-moment). A vision adds `story` segments, one per scene.
 
 Each segment is a list of `lines`. A line is one spoken phrase, and is the unit of everything: it is one lyric on screen, one tap target for seeking, and one timing entry from the voice service. Keeping the line as the atom is what makes text and audio stay together without any alignment logic in the UI.
 
@@ -58,7 +56,7 @@ So a misquoted or invented verse is not something to be caught in review; the sy
 
 ## Writing (`server/compose.ts`)
 
-One call to Claude with structured output (`messages.parse` and a Zod schema). The system prompt carries the voice, the theological guardrails and the verse library, and is marked for prompt caching since it is identical on every request. The request runs at low effort because she is watching a loader. If the call fails, is declined, or times out, the server returns a locally composed session instead; the client does the same if the server itself is unreachable.
+One call to Claude with structured output (`messages.parse` and a Zod schema), for all three modes: one system prompt describes them all (so it caches across modes) and the request names the one to write. The system prompt carries the voice, the theological guardrails and the verse library, and is marked for prompt caching since it is identical on every request. The request runs at low effort because she is watching a loader. If the call fails, is declined, or times out, the server returns a locally composed session instead; the client does the same if the server itself is unreachable.
 
 The model also returns a `care` flag when what she wrote suggests she may be in danger. The local composer sets the same flag from a short list of phrases. The player then shows where to find help before the session begins and again at the end.
 
@@ -135,6 +133,8 @@ Screens are swapped by `AnimatePresence` in `App.tsx` against a `screen` value i
 The name appears in: `index.html`, the manifest in `vite.config.ts`, the wordmark in `Splash.tsx`, `Onboarding.tsx` and `Home.tsx`, the system prompt in `server/compose.ts`, the persistence and cache keys (`liora`, `liora-media`, `liora-voice-v1`), and `package.json`. Changing the storage keys will orphan saved sessions, so rename those before launch or not at all.
 
 ## What has and has not been exercised
+
+Live timings on the deployed site: a short warfare prayer wrote in about 14 seconds and a full-length vision (about 4,200 characters) in about 19; narrating one story scene took about 9. These run inside Netlify's function time limit today, but a long vision is the request most likely to hit it.
 
 Verified in a headless browser at phone, tablet and desktop sizes: the whole flow from the opener to "Amen", local composition, device-voice playback, and the narration path against a mocked `/api/speak` (sync, seeking, pause, "Hear it", caching).
 

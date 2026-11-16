@@ -1,4 +1,4 @@
-import type { SceneId } from "./types";
+import type { Mode, SceneId } from "./types";
 
 /**
  * Background music, composed as it plays.
@@ -22,6 +22,12 @@ interface Mood {
   space: number;
   /** Octave shift for the piano: 0 is around middle C. */
   lift: number;
+  /** Start the progression on the relative minor, for weight. */
+  minor?: boolean;
+  /** A slow, low pulse under everything, like a heartbeat or a distant drum. */
+  pulse?: boolean;
+  /** Loudness of the pad relative to the usual. */
+  pad?: number;
 }
 
 const MOODS: Record<SceneId, Mood> = {
@@ -31,6 +37,12 @@ const MOODS: Record<SceneId, Mood> = {
   dusk: { key: -5, bar: 22, space: 4.4, lift: -1 }, // A: lower and slower, for evening
 };
 
+/** A prayer of warfare is lower, heavier and has a pulse; a vision is wide, bright and slow to change. */
+const MODE_MOODS: Record<Exclude<Mode, "prayer">, Mood> = {
+  warfare: { key: -7, bar: 14, space: 3.2, lift: -1, minor: true, pulse: true, pad: 1.7 },
+  vision: { key: 2, bar: 20, space: 2.8, lift: 0, pad: 1.2 },
+};
+
 /** I – vi – IV – V(sus): each chord as semitones above the key note. Gentle, unresolved, never sad. */
 const PROGRESSION = [
   [0, 4, 7, 14], // I add9
@@ -38,6 +50,9 @@ const PROGRESSION = [
   [5, 9, 12, 16], // IV
   [7, 12, 14, 19], // V sus4
 ];
+
+/** vi – IV – I – V: the same family of chords, entered through the minor. Grave, but it resolves upward. */
+const PROGRESSION_MINOR = [PROGRESSION[1], PROGRESSION[2], PROGRESSION[0], PROGRESSION[3]];
 
 /** The major pentatonic: any of these sounds right over any chord above. */
 const PENTATONIC = [0, 2, 4, 7, 9];
@@ -87,9 +102,9 @@ export class Score {
   private nextNote: number;
   private lastDegree = 2;
 
-  constructor(ctx: BaseAudioContext, scene: SceneId, seed = Date.now()) {
+  constructor(ctx: BaseAudioContext, scene: SceneId, seed = Date.now(), mode: Mode = "prayer") {
     this.ctx = ctx;
-    this.mood = MOODS[scene];
+    this.mood = mode === "prayer" ? MOODS[scene] : MODE_MOODS[mode];
     this.random = seeded(seed);
 
     this.output = ctx.createGain();
@@ -118,7 +133,7 @@ export class Score {
       osc.type = i % 2 ? "triangle" : "sine";
       osc.detune.value = i % 2 ? 4 : -4;
       const gain = ctx.createGain();
-      gain.gain.value = 0.05;
+      gain.gain.value = 0.05 * (this.mood.pad ?? 1);
       const lfo = ctx.createOscillator();
       lfo.frequency.value = 0.04 + i * 0.013;
       const depth = ctx.createGain();
@@ -136,7 +151,8 @@ export class Score {
   }
 
   private chord(): number[] {
-    return PROGRESSION[this.bar % PROGRESSION.length].map((n) => n + this.mood.key);
+    const progression = this.mood.minor ? PROGRESSION_MINOR : PROGRESSION;
+    return progression[this.bar % progression.length].map((n) => n + this.mood.key);
   }
 
   /** Move the pad to the current chord and sound its root, low and soft. */
@@ -183,6 +199,26 @@ export class Score {
     });
   }
 
+  /** A soft, low thump: felt more than heard. */
+  private beat(at: number, level: number) {
+    const ctx = this.ctx;
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(74, at);
+    osc.frequency.exponentialRampToValueAtTime(46, at + 0.5);
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, at);
+    env.gain.linearRampToValueAtTime(0.5 * level, at + 0.02);
+    env.gain.exponentialRampToValueAtTime(0.0001, at + 1.1);
+    osc.connect(env);
+    env.connect(this.dry);
+    env.connect(this.wet);
+    osc.start(at);
+    osc.stop(at + 1.2);
+  }
+
+  private nextBeat = 0;
+
   /** Write the music up to `time` on the audio clock. Call it a little ahead of now, repeatedly. */
   scheduleUntil(time: number) {
     const { bar: barLength, space, lift, key } = this.mood;
@@ -191,6 +227,16 @@ export class Score {
       this.barStart += barLength;
       this.bar++;
       this.voiceChord(this.barStart);
+    }
+
+    if (this.mood.pulse) {
+      if (!this.nextBeat) this.nextBeat = this.ctx.currentTime + 2;
+      while (this.nextBeat <= time) {
+        // Two beats close together, then a long rest.
+        this.beat(this.nextBeat, 1);
+        this.beat(this.nextBeat + 0.42, 0.6);
+        this.nextBeat += barLength / 4;
+      }
     }
 
     while (this.nextNote <= time) {
@@ -222,9 +268,11 @@ export class Music {
   private master?: GainNode;
   private timer = 0;
   private scene: SceneId;
+  private mode: Mode;
 
-  constructor(scene: SceneId) {
+  constructor(scene: SceneId, mode: Mode = "prayer") {
     this.scene = scene;
+    this.mode = mode;
   }
 
   /** Must be called from a tap the first time, or the browser keeps the audio context suspended. */
@@ -271,7 +319,7 @@ export class Music {
     limiter.ratio.value = 6;
     limiter.attack.value = 0.01;
     limiter.release.value = 0.4;
-    const score = new Score(ctx, this.scene);
+    const score = new Score(ctx, this.scene, Date.now(), this.mode);
     score.output.connect(limiter).connect(master).connect(ctx.destination);
     this.ctx = ctx;
     this.master = master;

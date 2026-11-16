@@ -25,7 +25,7 @@ function Scene({ scene }: { scene: SceneId }) {
 
 interface Props {
   scene: SceneId;
-  /** A photograph multiplied into the light, so it takes on the scene's colour and movement. */
+  /** A photograph shown in its own colours over the light. */
   photo: PhotoId | null;
   /** How strongly the scene is darkened so text stays readable, 0–1. */
   dim: number;
@@ -45,7 +45,12 @@ export function Backdrop({ scene, photo, dim }: Props) {
             <motion.img key={photo} className="backdrop__photo" src={photoUrl(photo)} style={{ objectPosition: PHOTO_FOCUS[photo] }} alt="" initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1.02 }} exit={{ opacity: 0 }} transition={{ opacity: { duration: 1.6, ease: "easeInOut" }, scale: { duration: 14, ease: "easeOut" } }} />
           )}
         </AnimatePresence>
-        <div className="backdrop__scrim" style={{ opacity: dim }} />
+        {/* Over a photograph: darkness at the edges falling away to nothing, with the far edges softened, so the picture stands out. */}
+        <div className="backdrop__veil" data-on={Boolean(photo)}>
+          <i />
+          <i />
+        </div>
+        <div className="backdrop__scrim" data-photo={Boolean(photo)} style={{ opacity: dim }} />
       </motion.div>
     </div>
   );

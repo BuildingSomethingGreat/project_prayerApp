@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { PhotoId } from "../content/photos";
-import type { SceneId, Session, SessionLength, ThemeId, VoiceId } from "./types";
+import { isPhoto, type PhotoId } from "../content/photos";
+import type { Mode, SceneId, Session, SessionLength, ThemeId, VoiceId } from "./types";
 
 export type Screen = "splash" | "onboarding" | "home" | "intention" | "voice" | "creating" | "player";
 
@@ -19,6 +19,10 @@ interface AppState {
   previous: Screen | null;
   /** True while the voice is sounding; the light behind the controls responds to it. */
   speaking: boolean;
+  /** True while the player is showing the words, which need a darker backdrop than the picture alone. */
+  reading: boolean;
+  /** The kind of moment she is about to create. */
+  mode: Mode;
   /** Direction of the last move, so pages slide the way she expects. */
   direction: 1 | -1;
   scene: SceneId;
@@ -61,6 +65,8 @@ export const useApp = create<AppState>()(
       screen: "splash",
       previous: null,
       speaking: false,
+      reading: false,
+      mode: "prayer",
       direction: 1,
       scene: "dawn",
       photo: null,
@@ -74,7 +80,7 @@ export const useApp = create<AppState>()(
       setLength: (length) => set({ length }),
       setSoundBed: (soundBed) => set({ soundBed }),
       finishOnboarding: () => set({ onboarded: true }),
-      open: (session) => set((s) => ({ previous: s.screen, current: session, scene: session.scene, photo: session.theme, screen: "player", direction: 1 })),
+      open: (session) => set((s) => ({ previous: s.screen, current: session, scene: session.scene, photo: isPhoto(session.photo) ? session.photo : session.theme, reading: false, screen: "player", direction: 1 })),
       save: (session) => set((s) => ({ sessions: [session, ...s.sessions.filter((x) => x.id !== session.id)].slice(0, 40) })),
       remove: (id) => set((s) => ({ sessions: s.sessions.filter((x) => x.id !== id) })),
     }),

@@ -2,7 +2,7 @@
 
 *A quiet place to pray.*
 
-Liora is a progressive web app for guided prayer and Scripture meditation, made for women who want to pray, reflect, and speak God's promises without the noise of secular wellness culture. She shares what is on her heart; Liora writes a short session around a real passage of Scripture and reads it to her in a calm voice while the words scroll past like lyrics over slow, warm light. It is designed for phone, tablet and desktop.
+Liora is a progressive web app for guided prayer and Scripture meditation, made for women who want to pray, reflect, and speak God's promises without the noise of secular wellness culture. She shares what is on her heart and chooses a kind of moment (a prayer, a prayer of spiritual warfare, or a vision of the life she is praying for told as a story); Liora writes a short session around a real passage of Scripture and reads it to her in a calm voice while the words scroll past like lyrics over slow, warm light. It is designed for phone, tablet and desktop.
 
 "Liora" is a working name (Hebrew, *my light*). It appears in a handful of places listed in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#renaming-the-app).
 

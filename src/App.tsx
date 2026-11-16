@@ -25,7 +25,7 @@ const SCREENS: Record<Screen, () => React.JSX.Element | null> = {
 /** How much each screen darkens the light behind it. Reading screens need more; the opener needs least. */
 const DIM: Record<Screen, number> = {
   splash: 0.3,
-  onboarding: 0.85,
+  onboarding: 0.3,
   home: 0.95,
   intention: 0.95,
   voice: 0.95,
@@ -42,7 +42,8 @@ const GLOW: Record<Screen, number> = {
   intention: 0.45,
   voice: 0.45,
   creating: 0.7,
-  player: 1,
+  // In the player the light belongs to the orb; keep the pool underneath quiet.
+  player: 0.3,
 };
 
 const MEDIA = ["dawn", "ember", "honey", "dusk"].flatMap((scene) => [`/media/${scene}.mp4`, `/media/${scene}.jpg`]);
@@ -52,6 +53,9 @@ export default function App() {
   const scene = useApp((s) => s.scene);
   const photo = useApp((s) => s.photo);
   const speaking = useApp((s) => s.speaking);
+  const reading = useApp((s) => s.reading);
+  // Over a photograph the veil does most of the work; the words need a little more.
+  const dim = screen === "player" ? (reading ? 0.62 : 0.12) : DIM[screen];
   const Current = SCREENS[screen];
 
   useEffect(() => {
@@ -71,7 +75,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
-        <Backdrop scene={scene} photo={photo} dim={DIM[screen]} />
+        <Backdrop scene={scene} photo={photo} dim={dim} />
         <GlowField scene={scene} level={GLOW[screen]} lively={speaking} />
         <div className="stage">
           <AnimatePresence mode="wait" initial={false}>

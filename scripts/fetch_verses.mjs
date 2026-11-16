@@ -3,7 +3,7 @@
 //
 // Source: bible-api.com, World English Bible British Edition (WEBBE, public domain).
 // Usage:  node scripts/fetch_verses.mjs
-import { writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -58,7 +58,50 @@ const LIBRARY = [
   ["2 Timothy 1:7", ["courage", "strength"]],
   ["Deuteronomy 31:8", ["courage", "comfort"]],
   ["Psalm 56:3-4", ["courage", "peace"]],
+
+  // Spiritual warfare: standing in what Christ has already won.
+  ["Ephesians 6:10-13", ["warfare"]],
+  ["2 Corinthians 10:4-5", ["warfare"]],
+  ["James 4:7", ["warfare"]],
+  ["Isaiah 54:17", ["warfare"]],
+  ["Luke 10:19", ["warfare"]],
+  ["1 John 4:4", ["warfare", "courage"]],
+  ["Romans 8:37", ["warfare", "strength"]],
+  ["Romans 8:31", ["warfare", "courage"]],
+  ["Psalm 91:1-4", ["warfare", "rest"]],
+  ["2 Chronicles 20:15", ["warfare"]],
+  ["Exodus 14:14", ["warfare", "peace"]],
+  ["Colossians 2:15", ["warfare"]],
+  ["Psalm 18:2", ["warfare", "strength"]],
+  ["Zechariah 4:6", ["warfare", "strength"]],
+  ["Psalm 46:1", ["warfare", "comfort"]],
+
+  // Vision: seeing, in faith, the life she is asking God for.
+  ["Habakkuk 2:2-3", ["vision", "hope"]],
+  ["Ephesians 3:20", ["vision", "purpose"]],
+  ["Hebrews 11:1", ["vision", "hope"]],
+  ["Psalm 126:1-3", ["vision", "gratitude"]],
+  ["Joel 2:25-26", ["vision", "hope"]],
+  ["Isaiah 60:1", ["vision", "purpose"]],
+  ["Psalm 23:5-6", ["vision", "provision"]],
+  ["Numbers 23:19", ["vision", "hope"]],
+  ["Mark 11:24", ["vision"]],
+  ["Psalm 20:4", ["vision", "purpose"]],
+  ["Jeremiah 33:3", ["vision", "guidance"]],
 ];
+
+/** Verses whose home is elsewhere but which also belong to another collection. */
+const ALSO = {
+  "Jeremiah 29:11": ["vision"],
+  "Isaiah 43:19": ["vision"],
+  "Psalm 37:4-5": ["vision"],
+  "Proverbs 16:3": ["vision"],
+  "Philippians 1:6": ["vision"],
+  "Isaiah 41:10": ["warfare"],
+  "2 Timothy 1:7": ["warfare"],
+  "Joshua 1:9": ["warfare"],
+  "Deuteronomy 31:8": ["warfare"],
+};
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const slug = (ref) => ref.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -83,10 +126,19 @@ async function fetchVerse(ref, attempt = 1) {
   return tidy(data.text);
 }
 
+// Text already fetched is kept, so adding a verse only fetches the new one.
+const known = existsSync(OUT) ? new Map(JSON.parse(readFileSync(OUT, "utf8")).verses.map((v) => [v.id, v.text])) : new Map();
+
 const verses = [];
-for (const [ref, themes] of LIBRARY) {
+for (const [ref, home] of LIBRARY) {
+  const id = slug(ref);
+  const themes = [...home, ...(ALSO[ref] ?? [])];
+  if (known.has(id)) {
+    verses.push({ id, ref, text: known.get(id), themes });
+    continue;
+  }
   const text = await fetchVerse(ref);
-  verses.push({ id: slug(ref), ref, text, themes });
+  verses.push({ id, ref, text, themes });
   console.log(`✓ ${ref}`);
   await sleep(2300); // the API allows 15 requests per 30 seconds
 }

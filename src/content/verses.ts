@@ -6,16 +6,24 @@ export const VERSES: Verse[] = library.verses.map((v) => ({ ...v, text: unquote(
 export const TRANSLATION = { name: library.translation, abbreviation: library.abbreviation };
 
 /**
- * An excerpt often begins or ends halfway through a quotation, which leaves
- * stray, unbalanced quote marks. Drop the quote marks (never the words) and
- * keep apostrophes.
+ * An excerpt often begins or ends partway through a sentence or a quotation.
+ * Tidy only what that leaves behind: drop stray quote marks (keeping
+ * apostrophes), capitalise the first letter, and close a trailing comma.
+ * No word is ever changed.
  */
 function unquote(text: string): string {
-  return text
+  const clean = text
     .replace(/[“”‘]/g, "")
     .replace(/(?<![A-Za-z])’/g, "")
     .replace(/\s{2,}/g, " ")
-    .trim();
+    .trim()
+    .replace(/[,;:]$/, ".");
+  return clean.charAt(0).toUpperCase() + clean.slice(1);
+}
+
+/** Verses gathered for a kind of moment rather than a theme ("warfare", "vision"). */
+export function versesTagged(tag: string): Verse[] {
+  return VERSES.filter((v) => v.themes.includes(tag));
 }
 
 const BY_ID = new Map(VERSES.map((v) => [v.id, v]));

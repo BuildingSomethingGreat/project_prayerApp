@@ -8,7 +8,7 @@ She is not a library of content, and she is not a habit tracker. She listens, op
 
 ## Where it is today
 
-A first, complete loop: a calm entrance, a three-screen introduction, "What's on your heart?", a choice of three voices, a personal session built on verified Scripture, and a player with synced words, segment navigation, an ambient sound bed, and the passage one tap away. It installs to the home screen and replays saved sessions offline.
+A first, complete loop: a calm entrance, a three-screen introduction, "What's on your heart?", a choice of three voices, three kinds of personal session built on verified Scripture (a prayer, a prayer of spiritual warfare, and an immersive vision story), and a player that opens on a voice-reactive orb over a photograph, with the words, generated music and the passage one tap away. It installs to the home screen and replays saved sessions offline.
 
 ## Before launch
 
@@ -59,7 +59,7 @@ Subscription, with a generous free tier: a daily verse and a few personal sessio
 - A feed, likes, follower counts, or anything that can be scrolled without end.
 - Streaks, badges, leaderboards, or shame for missing a day.
 - Advertising, or selling or sharing what she writes.
-- Generated Scripture, generated "words from God", or prophecy.
+- Generated Scripture, generated "words from God", or prophecy. The vision mode tells her own hope back to her as a story and puts it in God's hands; it never claims to speak for Him.
 - Promises of outcomes in exchange for prayer or payment.
 
 ## How we will know it is working

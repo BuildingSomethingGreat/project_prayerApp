@@ -16,7 +16,15 @@ export type ThemeId =
   | "hope"
   | "courage";
 
-export type SegmentKind = "arrive" | "scripture" | "reflect" | "pray" | "declare" | "bless";
+export type SegmentKind = "arrive" | "scripture" | "reflect" | "story" | "pray" | "declare" | "bless";
+
+/**
+ * What kind of moment this is.
+ * - prayer: a friend praying with her about what she shared.
+ * - warfare: a bold prayer of spiritual warfare, standing in Christ's victory.
+ * - vision: an immersive, present-tense story of the life she is asking God for.
+ */
+export type Mode = "prayer" | "warfare" | "vision";
 
 export interface Verse {
   id: string;
@@ -41,7 +49,11 @@ export interface Session {
   title: string;
   subtitle: string;
   theme: ThemeId;
+  /** Absent on sessions made before modes existed; treat as "prayer". */
+  mode?: Mode;
   scene: SceneId;
+  /** The photograph behind this session. Absent on older sessions, which use the theme's. */
+  photo?: string;
   voice: VoiceId;
   length: SessionLength;
   intention: string;
@@ -55,6 +67,7 @@ export interface Session {
 }
 
 export interface ComposeRequest {
+  mode?: Mode;
   intention: string;
   themeHint?: ThemeId;
   voice: VoiceId;

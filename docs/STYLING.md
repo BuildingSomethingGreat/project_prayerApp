@@ -56,13 +56,28 @@ The loops themselves are blurred and grain-free. Grain baked into video would sw
 
 ## Photographs
 
-Fifteen public-domain photographs live in `public/media/photos/`: one for each of the twelve themes and three for onboarding. Sources and photographers are in [CREDITS.md](CREDITS.md).
+Public-domain photographs live in `public/media/photos/`: portraits and hands for the prayer themes and onboarding, and landscapes (meadow, forest light, waterfall, storm, sunrise, ocean) for the warfare and vision modes and some prayer themes. Sources and photographers are in [CREDITS.md](CREDITS.md).
 
-A photograph is never shown in its own colours. `Backdrop` lays it over the moving gradient in greyscale with `mix-blend-mode: multiply`, so it keeps its shapes and takes its colour, and its slow movement, from the light behind it. That is what lets fifteen unrelated images look like one set. Each also drifts in from a slight zoom.
+Photographs are shown in their own colours. An earlier version multiplied them into the gradient in greyscale, which read as a strange overlay; that treatment is gone. What makes a photograph sit well now is the **veil** (`.backdrop__veil`):
 
-- Photographs appear behind onboarding (one per slide) and in the player (by theme), and as thumbnails on Home. Screens where she types or chooses stay as pure light.
-- The same image has to fill a tall phone and a wide desktop. `PHOTO_FOCUS` in `src/content/photos.ts` anchors each crop on its subject.
-- Choose images with a clear silhouette against a bright ground. Evenly lit, high-key photographs turn to blotches under multiply.
+- Black at the top and bottom falling away to fully clear through the middle, plus a faint vignette, so the picture stands out and the type at the edges stays readable.
+- The outermost bands are also blurred (a `backdrop-filter` masked to fade inward), which softens the frame the way a shallow lens would.
+- When the player is showing the words, a plain even dim is added on top (`reading` in the store) so text is readable over any picture.
+
+Other notes:
+
+- Photographs appear behind onboarding (one per slide) and in the player, and as thumbnails on Home. Screens where she types or chooses stay as pure light.
+- `choosePhoto()` in `src/content/photos.ts` picks one for each new session by mode and theme and stores it on the session.
+- The same image has to fill a tall phone and a wide desktop. `PHOTO_FOCUS` anchors each crop on its subject.
+- Two warfare photographs are stored in black and white, after the reference.
+
+## The player
+
+The player opens on the voice alone: the photograph, the session's name, and the **voice orb** (`components/VoiceOrb.tsx`), a WebGL sphere of light whose size and edge follow the loudness of the speech, with faint rings travelling outward. Tapping the orb is the one control: pause and play. Beneath it are the name of the current part, a hairline of progress, and two quiet buttons, Words and Scripture.
+
+- **Words** swaps the orb for the scrolling lyrics, a scrubber and a play button, and darkens the picture a little. The same button hides them again. On desktop, W toggles it.
+- The orb does not listen to the audio output. The engine decodes each narration clip once and keeps its loudness over time, and the orb reads that every frame (`engine.level()`). With the device's own voice, which cannot be measured, it moves in a speech-like rhythm.
+- Previous and next buttons are gone. Tapping a line or a part, or the arrow keys, moves through the session.
 
 ## Glow
 
@@ -73,7 +88,7 @@ A photograph is never shown in its own colours. `Backdrop` lays it over the movi
 - The field is read three ways: a long, faint halo, a defined body, and a hot core. Colour runs from a deep rim to a bright heart using three colours per scene (`PALETTES`).
 - The shader adds its own grain and fades to nothing before it reaches the words.
 
-One canvas serves every screen and is blended with `screen`, so it behaves as light. Its strength is set per screen (`GLOW` in `App.tsx`): faint on the opener, quiet behind forms, full in the player. Changes of screen, scene and strength all ease over about a second, so the light turns rather than cuts. While the voice is speaking it moves and breathes a little more, and on desktop one source leans gently towards the pointer.
+One canvas serves every screen and is blended with `screen`, so it behaves as light. Its strength is set per screen (`GLOW` in `App.tsx`): faint on the opener, quiet behind forms and in the player, where the orb is the light. Changes of screen, scene and strength all ease over about a second, so the light turns rather than cuts. While the voice is speaking it moves and breathes a little more, and on desktop one source leans gently towards the pointer.
 
 It renders at half resolution (the forms are soft, so this is invisible), pauses when the tab is hidden, holds still under `prefers-reduced-motion`, and falls back to a static CSS wash where WebGL is unavailable.
 

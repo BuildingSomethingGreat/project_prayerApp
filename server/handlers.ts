@@ -1,6 +1,6 @@
 import { composeLocally } from "../src/content/compose.ts";
 import { THEME_BY_ID } from "../src/content/themes.ts";
-import type { ComposeRequest, SegmentKind, SessionLength, VoiceId } from "../src/lib/types.ts";
+import type { ComposeRequest, Mode, SegmentKind, SessionLength, VoiceId } from "../src/lib/types.ts";
 import { canCompose, composeWithClaude } from "./compose.ts";
 import { canSpeak, speak, SpeechError } from "./speech.ts";
 
@@ -15,7 +15,8 @@ export interface Reply {
 
 const VOICES: VoiceId[] = ["naomi", "elodie", "gideon"];
 const LENGTHS: SessionLength[] = ["short", "full"];
-const KINDS: SegmentKind[] = ["arrive", "scripture", "reflect", "pray", "declare", "bless"];
+const KINDS: SegmentKind[] = ["arrive", "scripture", "reflect", "story", "pray", "declare", "bless"];
+const MODES: Mode[] = ["prayer", "warfare", "vision"];
 
 type Body = Record<string, unknown> | null | undefined;
 
@@ -26,7 +27,8 @@ export function health(): Reply {
 export async function compose(body: Body): Promise<Reply> {
   const input = body ?? {};
   const request: ComposeRequest = {
-    intention: String(input.intention ?? "").slice(0, 2000),
+    mode: MODES.includes(input.mode as Mode) ? (input.mode as Mode) : "prayer",
+    intention: String(input.intention ?? "").slice(0, 3000),
     themeHint: typeof input.themeHint === "string" && input.themeHint in THEME_BY_ID ? (input.themeHint as ComposeRequest["themeHint"]) : undefined,
     voice: VOICES.includes(input.voice as VoiceId) ? (input.voice as VoiceId) : "naomi",
     length: LENGTHS.includes(input.length as SessionLength) ? (input.length as SessionLength) : "short",
@@ -49,7 +51,8 @@ export async function speech(body: Body): Promise<Reply> {
   try {
     const hint = (value: unknown) => (typeof value === "string" ? value.slice(0, 400) : undefined);
     const kind = KINDS.includes(body?.kind as SegmentKind) ? (body?.kind as SegmentKind) : undefined;
-    return { status: 200, body: await speak(lines, voice, { kind, before: hint(body?.before), after: hint(body?.after) }) };
+    const mode = MODES.includes(body?.mode as Mode) ? (body?.mode as Mode) : undefined;
+    return { status: 200, body: await speak(lines, voice, { mode, kind, before: hint(body?.before), after: hint(body?.after) }) };
   } catch (error) {
     console.error("speak failed:", error instanceof Error ? error.message : error);
     const reason = error instanceof SpeechError ? `${error.status} ${error.reason}` : "unreachable";

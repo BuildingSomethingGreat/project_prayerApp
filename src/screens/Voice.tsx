@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronLeft, Play } from "../components/Icons";
 import { Page, Rise } from "../components/Page";
 import { useApp } from "../lib/store";
+import { MODE_BY_ID } from "../content/modes";
 import { VOICES } from "../content/voices";
 import type { SessionLength, VoiceId } from "../lib/types";
 
@@ -17,6 +18,7 @@ export function Voice() {
   const setVoice = useApp((s) => s.setVoice);
   const setLength = useApp((s) => s.setLength);
   const go = useApp((s) => s.go);
+  const cta = MODE_BY_ID[useApp((s) => s.mode)].cta;
 
   const audio = useRef<HTMLAudioElement | null>(null);
   const [sample, setSample] = useState<{ id: VoiceId; state: "loading" | "playing" } | null>(null);
@@ -105,7 +107,7 @@ export function Voice() {
 
           <div className="spacer" />
           <button className="btn" onClick={create}>
-            Create my moment
+            {cta}
           </button>
         </div>
       </div>

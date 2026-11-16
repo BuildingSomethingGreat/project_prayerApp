@@ -34,6 +34,38 @@ interface Loaded {
   url: string;
   starts: number[];
   duration: number;
+  /** How loud the voice is across the segment, 0–1, sampled ENVELOPE_RATE times a second. Filled in once decoded. */
+  envelope?: Float32Array;
+}
+
+const ENVELOPE_RATE = 40;
+
+/**
+ * Measures the loudness of narration over time by decoding it once, rather
+ * than routing live playback through an analyser. That keeps the audio element
+ * simple (which iOS needs) and still lets the screen move with the voice.
+ */
+async function measure(bytes: Uint8Array): Promise<Float32Array | undefined> {
+  const Ctor = window.OfflineAudioContext ?? (window as unknown as { webkitOfflineAudioContext?: typeof OfflineAudioContext }).webkitOfflineAudioContext;
+  if (!Ctor) return undefined;
+  try {
+    const audio = await new Ctor(1, 1, 22050).decodeAudioData(bytes.slice().buffer);
+    const data = audio.getChannelData(0);
+    const hop = Math.floor(audio.sampleRate / ENVELOPE_RATE);
+    const envelope = new Float32Array(Math.ceil(data.length / hop));
+    let peak = 0.0001;
+    for (let i = 0; i < envelope.length; i++) {
+      let sum = 0;
+      const end = Math.min(data.length, (i + 1) * hop);
+      for (let j = i * hop; j < end; j++) sum += data[j] * data[j];
+      envelope[i] = Math.sqrt(sum / hop);
+      peak = Math.max(peak, envelope[i]);
+    }
+    for (let i = 0; i < envelope.length; i++) envelope[i] = Math.min(1, (envelope[i] / peak) ** 0.7);
+    return envelope;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Device voices to prefer for each character, best first, then pitch and rate to shade the rest. */
@@ -169,6 +201,26 @@ export class Engine {
 
   seekSegment(seg: number) {
     this.jump(Math.max(0, Math.min(seg, this.spans.length - 1)), 0);
+  }
+
+  /**
+   * How loud the voice is at this instant, 0–1, for anything on screen that
+   * should move with it. Read it every frame; it is cheap.
+   */
+  level(): number {
+    if (this.status !== "playing") return 0;
+    const span = this.spans[this.seg];
+    if (!span || this.offset >= span.speechEnd - span.start) return 0; // the quiet between parts
+    const item = this.mode === "voice" ? this.loaded[this.seg] : undefined;
+    if (item?.envelope && this.audio) {
+      const at = this.audio.currentTime * ENVELOPE_RATE;
+      const i = Math.floor(at);
+      const a = item.envelope[i] ?? 0;
+      return a + ((item.envelope[i + 1] ?? a) - a) * (at - i);
+    }
+    // The device's own voice cannot be measured, so move in a speech-like rhythm instead.
+    const t = performance.now() / 1000;
+    return 0.32 + 0.3 * Math.abs(Math.sin(t * 6.1) * Math.sin(t * 2.3 + 1)) + 0.15 * Math.abs(Math.sin(t * 13.7));
   }
 
   destroy() {
@@ -308,12 +360,14 @@ export class Engine {
   private load(seg: number): Promise<void> {
     // The neighbouring lines are sent as context so the voice flows from one segment into the next.
     const segments = this.session.segments;
-    const context = { kind: segments[seg].kind, before: segments[seg - 1]?.lines.slice(-2).join(" "), after: segments[seg + 1]?.lines.slice(0, 2).join(" ") };
+    const context = { mode: this.session.mode, kind: segments[seg].kind, before: segments[seg - 1]?.lines.slice(-2).join(" "), after: segments[seg + 1]?.lines.slice(0, 2).join(" ") };
     this.loading[seg] ??= speakSegment(segments[seg].lines, this.session.voice, context)
       .then((spoken) => {
         if (this.destroyed) return;
         const bytes = Uint8Array.from(atob(spoken.audio), (c) => c.charCodeAt(0));
-        this.loaded[seg] = { url: URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" })), starts: spoken.starts, duration: spoken.duration };
+        const item: Loaded = { url: URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" })), starts: spoken.starts, duration: spoken.duration };
+        this.loaded[seg] = item;
+        void measure(bytes).then((envelope) => (item.envelope = envelope));
         this.layout();
         this.emit();
       })

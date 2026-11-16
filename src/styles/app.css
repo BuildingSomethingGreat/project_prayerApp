@@ -135,11 +135,50 @@ p {
   opacity: 1;
 }
 
-/* Greyscale, multiplied into the moving gradient: the photograph keeps its
-   shapes and takes its colour from the light, so every image belongs. */
+/* Photographs are shown as they are. What makes them sit well is the veil
+   below, not a colour treatment. */
 .backdrop__photo {
-  mix-blend-mode: multiply;
-  filter: grayscale(1) contrast(1.22) brightness(1.32);
+  filter: saturate(1.04) contrast(1.03);
+}
+
+/* The veil over a photograph: black at the top and bottom falling away to
+   nothing through the middle, so the picture stands out and the type at the
+   edges stays readable. Its two children blur the outermost bands, which
+   softens the frame the way a shallow lens would. */
+.backdrop__veil {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  background:
+    linear-gradient(180deg, rgb(4 2 3 / 0.86) 0%, rgb(4 2 3 / 0.5) 12%, rgb(4 2 3 / 0.12) 28%, transparent 40%, transparent 56%, rgb(4 2 3 / 0.3) 70%, rgb(4 2 3 / 0.74) 86%, rgb(4 2 3 / 0.94) 100%),
+    radial-gradient(120% 90% at 50% 46%, transparent 55%, rgb(4 2 3 / 0.5) 100%);
+}
+
+.backdrop__veil[data-on="true"] {
+  opacity: 1;
+}
+
+.backdrop__veil i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 26%;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.backdrop__veil i:first-child {
+  top: 0;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 30%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 30%, transparent 100%);
+}
+
+.backdrop__veil i:last-child {
+  bottom: 0;
+  height: 32%;
+  -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 35%, transparent 100%);
+  mask-image: linear-gradient(0deg, #000 0%, #000 35%, transparent 100%);
 }
 
 .backdrop__scrim {
@@ -149,6 +188,11 @@ p {
      saturated. Lightest through the middle, where the light should show. */
   background: linear-gradient(180deg, rgb(26 6 14 / 0.74) 0%, rgb(30 8 14 / 0.34) 36%, rgb(28 7 13 / 0.46) 70%, rgb(16 4 9 / 0.9) 100%);
   transition: opacity var(--slow) ease;
+}
+
+/* Over a photograph the extra darkening is plain and even, so it dims without tinting. */
+.backdrop__scrim[data-photo="true"] {
+  background: rgb(6 3 4 / 0.9);
 }
 
 /* Film grain over everything, glass included. Two passes: a fine tooth that
@@ -411,6 +455,15 @@ p {
     opacity: 0.62;
   }
 
+  .quiet-btn:hover,
+  .mode:hover {
+    color: var(--text);
+  }
+
+  .orb:hover {
+    transform: scale(1.015);
+  }
+
   .track:hover {
     color: var(--text);
   }
@@ -584,11 +637,6 @@ p {
   object-fit: cover;
 }
 
-.moment__art img + img {
-  mix-blend-mode: multiply;
-  filter: grayscale(1) contrast(1.1) brightness(1.25);
-}
-
 .moment__text {
   flex: 1;
   min-width: 0;
@@ -640,6 +688,37 @@ p {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+/* The three kinds of moment. */
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.mode {
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  font-size: var(--size-small);
+  color: var(--text-soft);
+  transition:
+    background var(--base) ease,
+    color var(--base) ease,
+    border-color var(--base) ease;
+}
+
+.mode[aria-checked="true"] {
+  background: var(--cream-50);
+  border-color: var(--cream-50);
+  color: var(--cocoa-900);
+}
+
+.split__lead .lede {
+  max-width: 38ch;
+  font-size: var(--size-small);
 }
 
 .field {
@@ -1058,6 +1137,125 @@ p {
   text-shadow: 0 2px 30px rgb(40 14 4 / 0.5);
 }
 
+/* The player's resting state: only the voice, made visible. */
+.orbstage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.orb {
+  position: relative;
+  width: min(86vw, 58vh, 560px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: transform var(--base) var(--ease);
+}
+
+.orb:active {
+  transform: scale(0.97);
+}
+
+.orb__canvas,
+.orb__flat {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.orb__flat {
+  inset: 22%;
+  width: auto;
+  height: auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff1d6, #ff9a4a 55%, #d9411c);
+  box-shadow: 0 0 90px rgb(255 140 70 / 0.6);
+}
+
+.orb__flat[data-playing="true"] {
+  animation: inhale 3.2s ease-in-out infinite;
+}
+
+.orb__glyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: var(--cocoa-900);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity var(--base) ease,
+    transform var(--base) var(--ease);
+}
+
+.orb__glyph[data-show="true"] {
+  opacity: 0.82;
+  transform: scale(1);
+}
+
+.orb__glyph .spinner {
+  border-color: rgb(29 17 11 / 0.2);
+  border-top-color: var(--cocoa-900);
+  width: 28px;
+  height: 28px;
+}
+
+.orbstage__part {
+  color: var(--text-soft);
+  animation: fade-in 1.2s ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Progress when the words are hidden: a line to glance at, not a control. */
+.hairline {
+  height: 2px;
+  margin: 0 10px;
+  border-radius: 1px;
+  background: rgb(255 238 217 / 0.2);
+  overflow: hidden;
+}
+
+.hairline i {
+  display: block;
+  height: 100%;
+  background: var(--cream-50);
+  transition: width 0.4s linear;
+}
+
+.quiet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--size-small);
+  color: var(--text-soft);
+  transition:
+    color var(--fast) ease,
+    background var(--fast) ease;
+}
+
+.quiet-btn[aria-pressed="true"] {
+  color: var(--text);
+}
+
+.quiet-btn:active {
+  background: var(--glass);
+}
+
 .player__dock {
   flex: none;
   width: 100%;
@@ -1173,8 +1371,8 @@ p {
 }
 
 .transport__play {
-  width: 78px;
-  height: 78px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -1518,8 +1716,7 @@ p {
   }
 
   .transport {
-    justify-content: center;
-    gap: var(--space-6);
+    justify-content: space-between;
   }
 
   .amen__actions .btn {
