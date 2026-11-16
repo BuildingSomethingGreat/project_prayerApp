@@ -4,14 +4,19 @@ import type { VoiceId } from "../src/lib/types.ts";
  * Voice synthesis through ElevenLabs. Each of Liora's three voices maps to an
  * ElevenLabs voice id, overridable per deployment.
  *
- * The defaults are ElevenLabs stock voices chosen to match each character
- * (warm / soft / deep). Audition and replace them before launch.
+ * Each voice has an ordered list of candidates: the deployment's own choice
+ * first, then stock voices that suit the character. Stock voices come and go
+ * between accounts, so if one is not found the next is tried, and the one that
+ * works is remembered. Audition and set your own before launch.
  */
-const VOICES: Record<VoiceId, string> = {
-  naomi: process.env.ELEVENLABS_VOICE_NAOMI ?? "XB0fDUnXU8jAwrOEA2Bg",
-  elodie: process.env.ELEVENLABS_VOICE_ELODIE ?? "pFZP5JQG7iQjIQuC4Bku",
-  gideon: process.env.ELEVENLABS_VOICE_GIDEON ?? "JBFqnCBsd6RMkjVDRZzb",
+const CANDIDATES: Record<VoiceId, string[]> = {
+  naomi: [process.env.ELEVENLABS_VOICE_NAOMI, "XrExE9yKIg1WjnnlVkGX", "EXAVITQu4vr4xnSDxMaL", "cgSgspJ2msm6clMCkdW9", "pFZP5JQG7iQjIQuC4Bku"].filter((id): id is string => Boolean(id)),
+  elodie: [process.env.ELEVENLABS_VOICE_ELODIE, "pFZP5JQG7iQjIQuC4Bku", "EXAVITQu4vr4xnSDxMaL"].filter((id): id is string => Boolean(id)),
+  gideon: [process.env.ELEVENLABS_VOICE_GIDEON, "JBFqnCBsd6RMkjVDRZzb", "onwK4e9ZLuTAKqWW03F9"].filter((id): id is string => Boolean(id)),
 };
+
+/** The candidate that last worked for each voice, so a missing one is only discovered once. */
+const working: Partial<Record<VoiceId, string>> = {};
 
 const MODEL = process.env.ELEVENLABS_MODEL ?? "eleven_multilingual_v2";
 /** A breath between phrases so the pacing stays meditative. */
@@ -61,16 +66,28 @@ export async function speak(lines: string[], voice: VoiceId): Promise<SpokenSegm
     text += line;
   }
 
-  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICES[voice]}/with-timestamps?output_format=mp3_44100_128`, {
-    method: "POST",
-    headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY ?? "", "content-type": "application/json" },
-    body: JSON.stringify({
-      text,
-      model_id: MODEL,
-      voice_settings: { stability: 0.62, similarity_boost: 0.78, style: 0.08, speed: 0.9 },
-    }),
-  });
-  if (!res.ok) throw new SpeechError(res.status, await res.text());
+  const candidates = working[voice] ? [working[voice]] : CANDIDATES[voice];
+  let res: Response | undefined;
+  let refusal: SpeechError | undefined;
+  for (const id of candidates) {
+    res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${id}/with-timestamps?output_format=mp3_44100_128`, {
+      method: "POST",
+      headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY ?? "", "content-type": "application/json" },
+      body: JSON.stringify({
+        text,
+        model_id: MODEL,
+        voice_settings: { stability: 0.62, similarity_boost: 0.78, style: 0.08, speed: 0.9 },
+      }),
+    });
+    if (res.ok) {
+      working[voice] = id;
+      break;
+    }
+    refusal = new SpeechError(res.status, await res.text());
+    // Only a missing voice is worth trying the next candidate for; anything else would fail the same way.
+    if (refusal.reason !== "voice_not_found") throw refusal;
+  }
+  if (!res?.ok) throw refusal ?? new Error("No voice is configured.");
 
   const data = (await res.json()) as {
     audio_base64: string;

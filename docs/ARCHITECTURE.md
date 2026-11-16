@@ -116,4 +116,4 @@ The name appears in: `index.html`, the manifest in `vite.config.ts`, the wordmar
 
 Verified in a headless browser at phone, tablet and desktop sizes: the whole flow from the opener to "Amen", local composition, device-voice playback, and the narration path against a mocked `/api/speak` (sync, seeking, pause, "Hear it", caching).
 
-Not yet run against the live services, because no keys were available during the build: the Claude call in `server/compose.ts` and the ElevenLabs call in `server/speech.ts`. Both type-check against the current SDK and API shapes, and both fail safe to the local paths. The default ElevenLabs voice ids in `speech.ts` are placeholders to audition and replace.
+Run against the live services on the deployed site: Claude wrote a session from a real intention in about nine seconds, and ElevenLabs returned narration with line timings for all three voices. What has not been done is a full listen-through in a real browser on a real device, and the three voices are stock ElevenLabs voices chosen by description, not by ear (`server/speech.ts` tries a short list for each and keeps the first that the account has).
