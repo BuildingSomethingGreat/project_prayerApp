@@ -39,7 +39,7 @@ Scripture is never generated in either mode. It always comes from the verified v
 
 ## Deploy to Netlify
 
-The repository is ready for Netlify: `netlify.toml` builds the PWA into `dist/`, and `netlify/functions/api.mts` serves `/api/*` as a function. Connect the repository in Netlify (Add new site → Import an existing project), choose the branch, and deploy; no settings need changing. Add `ANTHROPIC_API_KEY` and `ELEVENLABS_API_KEY` under Site configuration → Environment variables to turn on Claude writing and studio narration.
+It is live at https://liora-prayer.netlify.app. The repository is ready for Netlify: `netlify.toml` builds the PWA into `dist/`, and `netlify/functions/api.mts` serves `/api/*` as a function. Connect the repository in Netlify (Add new site → Import an existing project), choose the branch, and deploy; no settings need changing. To deploy by hand instead: `npx netlify-cli build --offline` then `npx netlify-cli deploy --prod --no-build --dir dist --functions .netlify/functions`. Add `ANTHROPIC_API_KEY` and `ELEVENLABS_API_KEY` under Site configuration → Environment variables to turn on Claude writing and studio narration.
 
 Two things differ from running `npm start`: the in-memory rate limit does not apply to functions, and a function has a short time limit, so a slow writing request falls back to the on-device library.
 
