@@ -69,7 +69,7 @@ The server sends a segment's lines to ElevenLabs' timestamped endpoint as one fl
 Three things keep the delivery conversational rather than recited:
 
 - **No forced pauses.** An earlier version inserted a fixed break after every line, which sounded choppy. The lines are now joined as prose and the voice paces itself from the punctuation.
-- **Expressive settings** (`DELIVERY` in `server/speech.ts`): lower stability so pitch and pace vary as a person's do, some style for warmth, speaker boost, and a pace just under natural.
+- **Expressive settings** (`DELIVERY` in `server/speech.ts`): lower stability so pitch and pace vary as a person's do, some style for warmth, speaker boost, and a natural pace (these voices already speak slowly; slowing them further dragged).
 - **Context across segments.** The last lines of the previous segment and the first lines of the next are sent as `previous_text` and `next_text`. They are not spoken; they let the voice continue in the same tone instead of starting cold each time.
 
 The writing prompt asks for the same thing from the other side: lines written for the ear, that carry a thought across two or three lines and vary in length.

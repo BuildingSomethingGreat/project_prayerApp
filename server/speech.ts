@@ -23,7 +23,7 @@ const MODEL = process.env.ELEVENLABS_MODEL ?? "eleven_multilingual_v2";
  * How the voice is asked to speak. Lower stability lets pitch and pace move the
  * way a person's do; a little style adds warmth; the pace is just under natural.
  */
-const DELIVERY = { stability: 0.4, similarity_boost: 0.8, style: 0.3, use_speaker_boost: true, speed: 0.94 };
+const DELIVERY = { stability: 0.4, similarity_boost: 0.8, style: 0.3, use_speaker_boost: true, speed: 1.0 };
 
 export interface SpokenSegment {
   /** Base64 MP3. */
