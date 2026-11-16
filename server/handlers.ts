@@ -1,6 +1,6 @@
 import { composeLocally } from "../src/content/compose.ts";
 import { THEME_BY_ID } from "../src/content/themes.ts";
-import type { ComposeRequest, SessionLength, VoiceId } from "../src/lib/types.ts";
+import type { ComposeRequest, SegmentKind, SessionLength, VoiceId } from "../src/lib/types.ts";
 import { canCompose, composeWithClaude } from "./compose.ts";
 import { canSpeak, speak, SpeechError } from "./speech.ts";
 
@@ -15,6 +15,7 @@ export interface Reply {
 
 const VOICES: VoiceId[] = ["naomi", "elodie", "gideon"];
 const LENGTHS: SessionLength[] = ["short", "full"];
+const KINDS: SegmentKind[] = ["arrive", "scripture", "reflect", "pray", "declare", "bless"];
 
 type Body = Record<string, unknown> | null | undefined;
 
@@ -47,7 +48,8 @@ export async function speech(body: Body): Promise<Reply> {
   if (!lines.length || lines.join(" ").length > 4000) return { status: 400, body: { error: "Nothing to speak, or too much at once." } };
   try {
     const hint = (value: unknown) => (typeof value === "string" ? value.slice(0, 400) : undefined);
-    return { status: 200, body: await speak(lines, voice, { before: hint(body?.before), after: hint(body?.after) }) };
+    const kind = KINDS.includes(body?.kind as SegmentKind) ? (body?.kind as SegmentKind) : undefined;
+    return { status: 200, body: await speak(lines, voice, { kind, before: hint(body?.before), after: hint(body?.after) }) };
   } catch (error) {
     console.error("speak failed:", error instanceof Error ? error.message : error);
     const reason = error instanceof SpeechError ? `${error.status} ${error.reason}` : "unreachable";

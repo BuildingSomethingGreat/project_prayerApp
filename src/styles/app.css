@@ -740,9 +740,16 @@ p {
   transform: scale(0.985);
 }
 
-.voice[aria-checked="true"] {
-  background: var(--glass-press);
-  border-color: rgb(255 238 217 / 0.55);
+/* The chosen voice is unmistakable: a bright ring and a lifted fill that hover cannot override. */
+.voice[aria-checked="true"],
+.voice[aria-checked="true"]:hover {
+  background: rgb(255 238 217 / 0.3);
+  border-color: var(--cream-50);
+  box-shadow: 0 0 0 1px var(--cream-50), 0 12px 40px rgb(20 6 10 / 0.3);
+}
+
+.voice[aria-checked="false"] .voice__text {
+  opacity: 0.78;
 }
 
 .voice__orb {

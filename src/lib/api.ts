@@ -1,5 +1,5 @@
 import { composeLocally } from "../content/compose";
-import type { Capabilities, ComposeRequest, Session, VoiceId } from "./types";
+import type { Capabilities, ComposeRequest, SegmentKind, Session, VoiceId } from "./types";
 
 export interface SpokenSegment {
   audio: string;
@@ -41,13 +41,13 @@ async function digest(text: string): Promise<string> {
   return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-const AUDIO_CACHE = "liora-voice-v2";
+const AUDIO_CACHE = "liora-voice-v3";
 
 /**
  * Spoken audio for one segment. Kept in Cache Storage so a saved session
  * replays offline and is never synthesised (or billed) twice.
  */
-export async function speakSegment(lines: string[], voice: VoiceId, context: { before?: string; after?: string } = {}): Promise<SpokenSegment> {
+export async function speakSegment(lines: string[], voice: VoiceId, context: { kind?: SegmentKind; before?: string; after?: string } = {}): Promise<SpokenSegment> {
   const key = `/voice-cache/${await digest(`${voice}\n${lines.join("\n")}`)}`;
   const cache = "caches" in window ? await caches.open(AUDIO_CACHE).catch(() => undefined) : undefined;
   const hit = await cache?.match(key);

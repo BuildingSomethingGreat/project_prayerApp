@@ -29,6 +29,6 @@ Before launch, open each link and confirm the licence shown there is still CC0, 
 ## Other assets
 
 - **Gradient stills** in `assets-src/higgsfield/` were generated with Higgsfield (GPT Image 2.6); the earlier, softer set is in `v1/`. The looping videos are rendered from them by `scripts/make_loops.py`.
-- **Voice previews** in `public/media/voices/` were generated with Higgsfield (ElevenLabs voices).
+- **Voice previews** in `public/media/voices/` were generated through the app's own `/api/speak`, with the same ElevenLabs voices and model that narrate sessions, so the preview is the voice she will hear. Regenerate them if the voice ids change.
 - **Scripture** is from the World English Bible, British Edition (public domain), via bible-api.com.
 - **Typefaces:** Outfit and Newsreader, both under the SIL Open Font License.

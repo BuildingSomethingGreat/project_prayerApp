@@ -308,7 +308,7 @@ export class Engine {
   private load(seg: number): Promise<void> {
     // The neighbouring lines are sent as context so the voice flows from one segment into the next.
     const segments = this.session.segments;
-    const context = { before: segments[seg - 1]?.lines.slice(-2).join(" "), after: segments[seg + 1]?.lines.slice(0, 2).join(" ") };
+    const context = { kind: segments[seg].kind, before: segments[seg - 1]?.lines.slice(-2).join(" "), after: segments[seg + 1]?.lines.slice(0, 2).join(" ") };
     this.loading[seg] ??= speakSegment(segments[seg].lines, this.session.voice, context)
       .then((spoken) => {
         if (this.destroyed) return;

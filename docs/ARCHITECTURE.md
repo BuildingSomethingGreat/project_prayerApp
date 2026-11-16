@@ -64,15 +64,16 @@ The model also returns a `care` flag when what she wrote suggests she may be in 
 
 ## Voice (`server/speech.ts`)
 
-The server sends a segment's lines to ElevenLabs' timestamped endpoint as one flowing passage, and reads each line's start time off the returned character alignment. The client gets `{ audio, starts, duration }` per segment.
+The server sends a segment's lines to ElevenLabs' timestamped endpoint as one flowing passage, and reads each line's start time off the returned character alignment. The client gets `{ audio, model, starts, duration }` per segment.
 
-Three things keep the delivery conversational rather than recited:
+The aim is a friend talking, not a narrator reading. Four things serve that:
 
-- **No forced pauses.** An earlier version inserted a fixed break after every line, which sounded choppy. The lines are now joined as prose and the voice paces itself from the punctuation.
-- **Expressive settings** (`DELIVERY` in `server/speech.ts`): lower stability so pitch and pace vary as a person's do, some style for warmth, speaker boost, and a natural pace (these voices already speak slowly; slowing them further dragged).
-- **Context across segments.** The last lines of the previous segment and the first lines of the next are sent as `previous_text` and `next_text`. They are not spoken; they let the voice continue in the same tone instead of starting cold each time.
+- **A directable model.** `server/speech.ts` tries Eleven v3 first, which speaks conversationally and takes short bracketed cues. Each part of a session has its own cue (`DIRECTION`): warm and close for the arrival, quietly reverent for Scripture, tender for prayer. The cues are sent ahead of the words and are never shown. If an account or voice cannot use v3, the older multilingual model is used with expressive settings and with the neighbouring lines as `previous_text` / `next_text` for continuity.
+- **No forced pauses.** An earlier version inserted a fixed break after every line, which sounded choppy. Lines are joined as prose and the voice paces itself.
+- **Short silences between parts** (`pauseAfter`, 1.4 to 2.2 seconds), enough to breathe without the session feeling like separate recordings.
+- **A script written as conversation.** The writing prompt casts Liora as her friend, speaking as "I" and "we", reacting to what she said, in everyday words. See [CONTENT.md](CONTENT.md).
 
-The writing prompt asks for the same thing from the other side: lines written for the ear, that carry a thought across two or three lines and vary in length.
+The voice previews on the voice screen are made with the same voices and model, so what she chooses is what she hears.
 
 The client stores each response in Cache Storage, keyed by a hash of voice and text (`api.speakSegment`). A saved session therefore replays offline and is never synthesised, or billed, twice.
 

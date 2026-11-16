@@ -34,7 +34,7 @@ function excerpt(text: string, max = 180): string {
   return clipped.slice(0, cut).replace(/[.!?,;:\s]+$/, "");
 }
 
-export function scriptureSegment(verse: Verse, intro?: string, pauseAfter = 4): Segment {
+export function scriptureSegment(verse: Verse, intro?: string, pauseAfter = 2.2): Segment {
   return {
     kind: "scripture",
     title: verse.ref,
@@ -62,14 +62,14 @@ export function composeLocally(request: ComposeRequest, pick: (n: number) => num
     lines: shared
       ? [...ARRIVE, "You came here carrying something.", `“${excerpt(shared)}.”`, "He has heard every word of it."]
       : ARRIVE,
-    pauseAfter: 3,
+    pauseAfter: 1.4,
   };
 
   const segments: Segment[] = [
     arrive,
     scriptureSegment(first),
-    { kind: "reflect", title: "Reflect", lines: theme.reflect, pauseAfter: 5 },
-    { kind: "pray", title: "Pray", lines: theme.pray, pauseAfter: 4 },
+    { kind: "reflect", title: "Reflect", lines: theme.reflect, pauseAfter: 2.2 },
+    { kind: "pray", title: "Pray", lines: theme.pray, pauseAfter: 2 },
   ];
 
   if (request.length === "full") {
@@ -77,12 +77,12 @@ export function composeLocally(request: ComposeRequest, pick: (n: number) => num
       kind: "declare",
       title: "Speak life",
       lines: ["Now, agree with what God has already said about you.", "Say these with me, aloud or in your heart.", ...theme.declare],
-      pauseAfter: 4,
+      pauseAfter: 2,
     });
-    if (second.id !== first.id) segments.push(scriptureSegment(second, "Carry one more word with you.", 3));
+    if (second.id !== first.id) segments.push(scriptureSegment(second, "Carry one more word with you.", 2));
   }
 
-  segments.push({ kind: "bless", title: "Go gently", lines: theme.bless, pauseAfter: 2 });
+  segments.push({ kind: "bless", title: "Go gently", lines: theme.bless, pauseAfter: 1.5 });
 
   return {
     id: newId(),
