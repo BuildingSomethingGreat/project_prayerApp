@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Book, ChevronDown, Next, Pause, Play, Prev, Waves } from "../components/Icons";
-import { Glow } from "../components/Glow";
 import { ScriptureSheet } from "../components/ScriptureSheet";
 import { sessionVerses } from "../content/compose";
 import { getCapabilities } from "../lib/api";
@@ -79,6 +78,14 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
   }, [state.status, engine]);
 
   const sounding = state.status === "playing" || state.status === "buffering";
+  // Let the light behind the controls know the voice is sounding.
+  useEffect(() => {
+    useApp.setState({ speaking: sounding });
+    return () => {
+      useApp.setState({ speaking: false });
+    };
+  }, [sounding]);
+
   useEffect(() => {
     if (sounding && soundBed) bed.start();
     else bed.stop();
@@ -138,7 +145,6 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
 
   return (
     <>
-      <Glow lively={sounding} />
       <header className="topbar">
         <button className="icon-btn" onClick={close} aria-label="Close">
           <ChevronDown />

@@ -60,9 +60,9 @@ export function Onboarding() {
             className="onboard__slide"
             custom={direction}
             variants={{
-              enter: (d: number) => ({ opacity: 0, x: 44 * d, filter: "blur(6px)" }),
-              center: { opacity: 1, x: 0, filter: "blur(0px)" },
-              exit: (d: number) => ({ opacity: 0, x: -44 * d, filter: "blur(6px)" }),
+              enter: (d: number) => ({ opacity: 0, x: 36 * d }),
+              center: { opacity: 1, x: 0 },
+              exit: (d: number) => ({ opacity: 0, x: -36 * d }),
             }}
             initial="enter"
             animate="center"

@@ -1,6 +1,7 @@
 import { AnimatePresence, MotionConfig } from "framer-motion";
 import { useEffect } from "react";
 import { Backdrop } from "./components/Backdrop";
+import { GlowField } from "./components/GlowField";
 import { getCapabilities } from "./lib/api";
 import { useApp, type Screen } from "./lib/store";
 import { Creating } from "./screens/Creating";
@@ -33,12 +34,24 @@ const DIM: Record<Screen, number> = {
   player: 0.66,
 };
 
+/** How bright the drifting light behind the controls is on each screen. */
+const GLOW: Record<Screen, number> = {
+  splash: 0,
+  onboarding: 0.4,
+  home: 0.45,
+  intention: 0.45,
+  voice: 0.45,
+  creating: 0.7,
+  player: 1,
+};
+
 const MEDIA = ["dawn", "ember", "honey", "dusk"].flatMap((scene) => [`/media/${scene}.mp4`, `/media/${scene}.jpg`]);
 
 export default function App() {
   const screen = useApp((s) => s.screen);
   const scene = useApp((s) => s.scene);
   const photo = useApp((s) => s.photo);
+  const speaking = useApp((s) => s.speaking);
   const Current = SCREENS[screen];
 
   useEffect(() => {
@@ -59,6 +72,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="app">
         <Backdrop scene={scene} photo={photo} orb={screen === "splash"} dim={DIM[screen]} />
+        <GlowField scene={scene} level={GLOW[screen]} lively={speaking} />
         <div className="stage">
           <AnimatePresence mode="wait" initial={false}>
             <Current key={screen} />

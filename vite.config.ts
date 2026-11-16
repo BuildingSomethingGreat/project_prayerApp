@@ -15,8 +15,8 @@ export default defineConfig({
         display: "standalone",
         orientation: "portrait",
         start_url: "/",
-        background_color: "#5a443b",
-        theme_color: "#5a443b",
+        background_color: "#4a2f2a",
+        theme_color: "#4a2f2a",
         categories: ["lifestyle", "health"],
         icons: [
           { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

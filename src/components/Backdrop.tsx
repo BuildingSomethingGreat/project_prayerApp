@@ -62,7 +62,7 @@ export function Backdrop({ scene, photo, orb, dim }: Props) {
   return (
     <div className="backdrop" aria-hidden>
       <motion.div className="backdrop__glow" style={frame} animate={{ opacity: orb ? [0.65, 1, 0.65] : 0, scale: orb ? [1, 1.06, 1] : 1.5 }} transition={orb ? { duration: 5, repeat: Infinity, ease: "easeInOut" } : { duration: 1.2 }} />
-      <motion.div className="backdrop__window" initial={false} animate={{ ...shape, scale: orb ? [1, 1.02, 1] : 1 }} transition={orb ? { scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }, default: { duration: 0 } } : { duration: 1.5, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.div className="backdrop__window" initial={false} animate={{ ...shape, scale: orb ? [1, 1.02, 1] : 1 }} transition={orb ? { scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }, default: { duration: 0 } } : { duration: 1.25, ease: [0.65, 0, 0.2, 1] }}>
         <AnimatePresence initial={false}>
           <Scene key={scene} scene={scene} />
         </AnimatePresence>

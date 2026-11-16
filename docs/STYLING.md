@@ -15,41 +15,42 @@ All tokens live in `src/styles/tokens.css`. Component styles are in `src/styles/
 
 ## Colour
 
-A single warm family. There is no blue-white, no pure black, and no saturated accent.
+Bold, saturated light over deep wine-dark grounds. The colour lives in the light (the scenes and the glow); the interface itself stays cream and glass so it never competes.
 
 | Token | Value | Use |
 | --- | --- | --- |
 | `--cream-50` | `#fff6ea` | Primary text, primary buttons, active states |
 | `--text-soft` | cream at 68% | Body copy, secondary labels |
 | `--text-faint` | cream at 42% | Second line of headings, hints, eyebrows |
-| `--cocoa-900` | `#1d110b` | Text on cream buttons |
-| `--taupe-600` | `#5a443b` | The page behind the splash window; browser theme colour |
-| `--amber-300/400` | `#f8c98f` / `#f2a25c` | The breathing loader, focus rings. Sparingly. |
-| `--glass` → `--glass-press` | cream at 10% → 24% | Translucent surfaces, resting to pressed |
-| `--hairline` | cream at 18% | The 1px edge on glass |
+| `--cocoa-900` | `#1e0a10` | Text on cream buttons |
+| `--taupe-600` | `#4a2f2a` | The page behind the splash window; browser theme colour |
+| `--flame-500`, `--amber-400`, `--rose-300`, `--violet-500` | `#ff4d1f`, `#ff8a2a`, `#ff5c8a`, `#6a2bd9` | The palette of the light, for reference. Use in the interface sparingly. |
+| `--amber-300` | `#ffc46b` | Focus rings, the breathing loader |
+| `--glass` → `--glass-press` | cream at 11% → 27% | Translucent surfaces, resting to pressed |
+| `--hairline` | cream at 22% | The 1px edge on glass |
 
 Selection is shown by **inverting to cream**, never by adding a colour. A selected chip, the chosen length and the play button all use the same cream fill.
 
 ### Scenes
 
-Four looping backdrops, each with a mood. Sessions choose one by theme.
+Four looping backdrops, each with a mood. Sessions choose one by theme. The first, softer set of stills is kept in `assets-src/higgsfield/v1/`.
 
 | Scene | Feels like | Used for |
 | --- | --- | --- |
-| `dawn` | Amber and cream with a slate corner | Splash, onboarding, home; peace, guidance, hope |
-| `honey` | Butter, blush and gold | Gratitude, worth, dreams |
-| `ember` | Terracotta, rose and plum | Voice screen; courage, strength, praying for others |
-| `dusk` | Mauve and indigo over a low amber glow | Intention screen; rest, comfort |
+| `dawn` | Vermilion and tangerine under an espresso and teal sky, into gold and cream | Splash, onboarding, home; peace, guidance, hope |
+| `honey` | Saffron and marigold with coral and fuchsia | Gratitude, worth, dreams |
+| `ember` | Crimson and burnt orange over aubergine, with magenta and molten gold | Voice screen; courage, strength, praying for others |
+| `dusk` | Royal indigo through magenta to a low band of orange | Intention screen; rest, comfort |
 
 ### Keeping text readable
 
 Text is always cream on a darkened scene. `Backdrop` lays a scrim over the video, and each screen sets how strong it is (`DIM` in `App.tsx`): none on the splash, most in the player.
 
-The scrim is a **red-brown** gradient, not black. Black over the pale scenes turns them olive; brown keeps them caramel. It is heavier at the top and bottom, where the controls sit, and lighter through the middle.
+The scrim is a deep **wine-black** gradient. It darkens for legibility without browning the colour underneath, and it is heavier at the top and bottom, where the controls sit, and lightest through the middle, where the light should show.
 
 ## Grain
 
-Grain is a large part of the look, so it is deliberately visible. Two fixed SVG noise layers (`.grain`) sit above everything, including glass and sheets: a fine, high-contrast tooth blended with `overlay`, and a coarser pass blended with `soft-light`. The fine layer shifts position a few times a second so it reads as film rather than as a texture stuck to the glass. It gives the matte, analogue surface from the references, ties video, photographs and UI into one image, and hides banding in the gradients.
+Grain is a large part of the look, so it is deliberately visible. Two fixed SVG noise layers (`.grain`) sit above everything, including glass and sheets: a fine, high-contrast tooth blended with `overlay`, and a coarser pass blended with `soft-light`. The grain is still: an earlier version moved, and it read as flicker. It gives the matte, analogue surface from the references, ties video, photographs and UI into one image, and hides banding in the gradients.
 
 The loops themselves are blurred and grain-free. Grain baked into video would swim as the image moves, and would triple the file size.
 
@@ -65,9 +66,16 @@ A photograph is never shown in its own colours. `Backdrop` lays it over the movi
 
 ## Glow
 
-`components/Glow.tsx` puts three slow, morphing shapes behind the controls at the foot of the screen, to give the interface depth. Each is a warm gradient with a light blur for a soft edge and a `drop-shadow` for the halo, and the group is blended with `screen` so it behaves like light. They drift, rotate and change outline on cycles of 19 to 29 seconds that never line up.
+`components/GlowField.tsx` draws light that pools and drifts behind the controls at the foot of the screen. It is a WebGL fragment shader, not DOM shapes:
 
-The player shows the glow at full strength, and its core pulses a little faster while the voice is speaking. Other screens show a quieter version behind the primary button (`<Page>` adds it unless `glow={false}`).
+- Five slowly orbiting sources are summed into one smooth field, so neighbouring forms merge and part like liquid instead of overlapping like discs.
+- The field is bent by flowing simplex noise, so no edge is ever a clean circle.
+- The field is read three ways: a long, faint halo, a defined body, and a hot core. Colour runs from a deep rim to a bright heart using three colours per scene (`PALETTES`).
+- The shader adds its own grain and fades to nothing before it reaches the words.
+
+One canvas serves every screen and is blended with `screen`, so it behaves as light. Its strength is set per screen (`GLOW` in `App.tsx`): off on the splash, quiet behind forms, full in the player. Changes of screen, scene and strength all ease over about a second, so the light turns rather than cuts. While the voice is speaking it moves and breathes a little more, and on desktop one source leans gently towards the pointer.
+
+It renders at half resolution (the forms are soft, so this is invisible), pauses when the tab is hidden, holds still under `prefers-reduced-motion`, and falls back to a static CSS wash where WebGL is unavailable.
 
 ## Layout across screens
 
@@ -138,7 +146,7 @@ Both are self-hosted through `@fontsource-variable`, so they work offline and ma
 The catalogue:
 
 - **Splash.** The light breathes inside a rounded window with a frosted inner edge; the wordmark resolves from blurred, wide tracking. The window itself then grows to fill the screen as the first page arrives.
-- **Pages** (`components/Page.tsx`). Enter with fade, an 18px drift in the direction of travel, and a blur clearing. Exit faster than they enter.
+- **Pages** (`components/Page.tsx`). Enter with a fade and a 16px drift in the direction of travel; exit faster than they enter. Only opacity and position animate. Animating blur over blurred glass stuttered, so it was removed. The first page waits for the splash window to finish opening.
 - **Rise.** Content within a page arrives in sequence, 80ms apart.
 - **Press.** Buttons scale to 0.975, icon buttons to 0.9.
 - **Lyrics.** The current line brightens and grows 1.5% over 600ms; the list glides to keep it just above centre.

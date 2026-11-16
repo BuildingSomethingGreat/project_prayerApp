@@ -89,6 +89,8 @@ Things worth knowing before changing it:
 
 The loops are made by `scripts/make_loops.py` from four gradient stills generated with Higgsfield. Each frame samples the still through a displacement field of sinusoids that complete a whole number of cycles over the clip, so the last frame flows into the first with no cut. Each loop is 20 seconds, 540×960, and about 400 KB.
 
+`GlowField` is a second always-mounted layer above the backdrop: one WebGL canvas that draws the light behind the controls on every screen. The player tells it when the voice is sounding through `speaking` in the store.
+
 Screens are swapped by `AnimatePresence` in `App.tsx` against a `screen` value in the store. There is no router: the flow is linear and the app has no shareable URLs yet.
 
 ## Offline and install

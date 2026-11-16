@@ -15,6 +15,10 @@ interface AppState {
 
   // In memory
   screen: Screen;
+  /** The screen she just left, so an entrance can wait for the splash to finish opening. */
+  previous: Screen | null;
+  /** True while the voice is sounding; the light behind the controls responds to it. */
+  speaking: boolean;
   /** Direction of the last move, so pages slide the way she expects. */
   direction: 1 | -1;
   scene: SceneId;
@@ -55,12 +59,14 @@ export const useApp = create<AppState>()(
       sessions: [],
 
       screen: "splash",
+      previous: null,
+      speaking: false,
       direction: 1,
       scene: "dawn",
       photo: null,
       intention: "",
 
-      go: (screen, direction = 1) => set((s) => ({ screen, direction, scene: SCENE_FOR[screen] ?? s.scene, photo: null })),
+      go: (screen, direction = 1) => set((s) => ({ screen, previous: s.screen, direction, scene: SCENE_FOR[screen] ?? s.scene, photo: null })),
       setScene: (scene) => set({ scene }),
       setPhoto: (photo) => set({ photo }),
       setIntention: (intention, themeHint) => set((s) => ({ intention, themeHint: themeHint ?? s.themeHint })),
@@ -68,7 +74,7 @@ export const useApp = create<AppState>()(
       setLength: (length) => set({ length }),
       setSoundBed: (soundBed) => set({ soundBed }),
       finishOnboarding: () => set({ onboarded: true }),
-      open: (session) => set({ current: session, scene: session.scene, photo: session.theme, screen: "player", direction: 1 }),
+      open: (session) => set((s) => ({ previous: s.screen, current: session, scene: session.scene, photo: session.theme, screen: "player", direction: 1 })),
       save: (session) => set((s) => ({ sessions: [session, ...s.sessions.filter((x) => x.id !== session.id)].slice(0, 40) })),
       remove: (id) => set((s) => ({ sessions: s.sessions.filter((x) => x.id !== id) })),
     }),

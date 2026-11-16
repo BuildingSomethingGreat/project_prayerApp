@@ -150,8 +150,9 @@ p {
 .backdrop__scrim {
   position: absolute;
   inset: 0;
-  /* A red-brown veil rather than a black one: black over the pale scenes turns them olive. */
-  background: linear-gradient(180deg, rgb(54 22 10 / 0.76) 0%, rgb(70 28 12 / 0.44) 38%, rgb(58 24 11 / 0.6) 72%, rgb(26 12 6 / 0.9) 100%);
+  /* A deep wine-black veil: it darkens for legibility but lets the colour stay
+     saturated. Lightest through the middle, where the light should show. */
+  background: linear-gradient(180deg, rgb(26 6 14 / 0.74) 0%, rgb(30 8 14 / 0.34) 36%, rgb(28 7 13 / 0.46) 70%, rgb(16 4 9 / 0.9) 100%);
   transition: opacity var(--slow) ease;
 }
 
@@ -166,7 +167,8 @@ p {
 }
 
 /* Film grain over everything, glass included. Two passes: a fine tooth that
-   reads as texture, and a coarser one that breaks up the gradients. */
+   reads as texture, and a coarser one that breaks up the gradients. It is
+   still on purpose: moving grain read as flicker. */
 .grain,
 .grain::after {
   position: absolute;
@@ -180,7 +182,6 @@ p {
   opacity: 0.5;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncG type='linear' slope='2.6' intercept='-.8'/%3E%3CfeFuncB type='linear' slope='2.6' intercept='-.8'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 0.9s steps(5) infinite;
 }
 
 .grain::after {
@@ -191,149 +192,27 @@ p {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@keyframes grain {
-  0% {
-    transform: translate(0, 0);
-  }
-  20% {
-    transform: translate(-14px, 9px);
-  }
-  40% {
-    transform: translate(11px, -17px);
-  }
-  60% {
-    transform: translate(-19px, -6px);
-  }
-  80% {
-    transform: translate(16px, 13px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
+/* ── Glow field: WebGL light behind the controls (components/GlowField.tsx) ── */
 
-/* ── Glow: drifting light behind the controls ──────────────────────────── */
-
-.glow {
+.glowfield {
   position: absolute;
-  z-index: -1;
-  left: 50%;
-  bottom: -120px;
-  width: min(135%, 860px);
-  height: 430px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0.74;
-  transition: opacity 1.6s ease;
-}
-
-.glow[data-soft="true"] {
-  opacity: 0.4;
-  height: 340px;
-}
-
-.glow i {
-  position: absolute;
-  /* The blur softens the edge; the drop-shadow is the halo around it. */
-  filter: blur(15px) drop-shadow(0 0 54px rgb(255 122 54 / 0.65));
-  will-change: transform, border-radius;
-}
-
-.glow i:nth-child(1) {
-  left: 4%;
+  z-index: 1;
+  left: 0;
+  right: 0;
   bottom: 0;
-  width: 64%;
-  height: 62%;
-  background: linear-gradient(115deg, #ff8f45 0%, #e4491c 55%, #a92812 100%);
-  border-radius: 62% 38% 55% 45% / 58% 62% 38% 42%;
-  animation:
-    morph-a 19s ease-in-out infinite alternate,
-    drift-a 23s ease-in-out infinite alternate;
+  width: 100%;
+  height: 50dvh;
+  pointer-events: none;
+  /* Blended as light, so it brightens what is behind it and never greys it. */
+  mix-blend-mode: screen;
 }
 
-.glow i:nth-child(2) {
-  right: 2%;
-  bottom: 6%;
-  width: 56%;
-  height: 52%;
-  background: linear-gradient(240deg, #ffb066 0%, #ef6a2c 50%, #c43a1c 100%);
-  border-radius: 40% 60% 42% 58% / 60% 44% 56% 40%;
-  opacity: 0.85;
-  animation:
-    morph-b 23s ease-in-out infinite alternate,
-    drift-b 29s ease-in-out infinite alternate;
-}
-
-.glow i:nth-child(3) {
-  left: 36%;
-  bottom: 18%;
-  width: 30%;
-  height: 34%;
-  background: radial-gradient(closest-side, #ffc27a, #ff8a3c 60%, rgb(255 120 50 / 0));
-  border-radius: 50%;
-  filter: blur(30px) drop-shadow(0 0 80px rgb(255 160 90 / 0.6));
-  opacity: 0.6;
-  animation: pulse 9s ease-in-out infinite;
-}
-
-/* While the voice is speaking the light moves a little more. */
-.glow[data-lively="true"] i:nth-child(3) {
-  animation-duration: 5.5s;
-}
-
-@keyframes morph-a {
-  0% {
-    border-radius: 62% 38% 55% 45% / 58% 62% 38% 42%;
-  }
-  50% {
-    border-radius: 44% 56% 38% 62% / 46% 40% 60% 54%;
-  }
-  100% {
-    border-radius: 55% 45% 64% 36% / 62% 52% 48% 38%;
-  }
-}
-
-@keyframes morph-b {
-  0% {
-    border-radius: 40% 60% 42% 58% / 60% 44% 56% 40%;
-  }
-  50% {
-    border-radius: 58% 42% 60% 40% / 42% 58% 42% 58%;
-  }
-  100% {
-    border-radius: 46% 54% 36% 64% / 54% 36% 64% 46%;
-  }
-}
-
-@keyframes drift-a {
-  from {
-    transform: translate(-6%, 8%) rotate(-10deg) scale(0.96);
-  }
-  to {
-    transform: translate(12%, -8%) rotate(14deg) scale(1.1);
-  }
-}
-
-@keyframes drift-b {
-  from {
-    transform: translate(8%, 4%) rotate(12deg) scale(1.06);
-  }
-  to {
-    transform: translate(-14%, -10%) rotate(-12deg) scale(0.94);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(0.86);
-    opacity: 0.55;
-  }
-  50% {
-    transform: scale(1.18);
-    opacity: 0.9;
-  }
+.glowfield--flat {
+  background:
+    radial-gradient(60% 70% at 30% 100%, rgb(255 96 30 / 0.8), transparent 70%),
+    radial-gradient(55% 60% at 72% 100%, rgb(255 60 110 / 0.6), transparent 70%);
+  filter: blur(30px);
+  transition: opacity 1.4s ease;
 }
 
 /* ── Type ──────────────────────────────────────────────────────────────── */
@@ -1364,7 +1243,7 @@ p {
   gap: var(--space-4);
   padding: var(--gutter);
   text-align: center;
-  background: rgb(26 12 6 / 0.74);
+  background: rgb(22 6 12 / 0.76);
   -webkit-backdrop-filter: blur(28px);
   backdrop-filter: blur(28px);
 }
@@ -1419,7 +1298,7 @@ p {
   flex-direction: column;
   padding: var(--space-3) var(--gutter) calc(var(--safe-bottom) + var(--space-5));
   border-radius: var(--radius-l) var(--radius-l) 0 0;
-  background: rgb(52 33 24 / 0.82);
+  background: rgb(44 16 24 / 0.8);
   border-top: 1px solid var(--hairline);
   -webkit-backdrop-filter: saturate(1.4) blur(36px);
   backdrop-filter: saturate(1.4) blur(36px);
@@ -1523,11 +1402,6 @@ p {
     align-self: flex-start;
   }
 
-  .glow {
-    width: min(70%, 900px);
-    height: 440px;
-    bottom: -190px;
-  }
 
   /* Onboarding: the words sit low and left over a full-bleed photograph. */
   .onboard__slide {

@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "public" / "icons"
-TAUPE = (90, 68, 59)
+TAUPE = (74, 47, 42)
 
 
 def icon(size: int, inset: float) -> Image.Image:
