@@ -143,7 +143,9 @@ export function GlowField({ scene, level, lively }: Props) {
   const [supported, setSupported] = useState(true);
   // The draw loop reads these, so props can change without rebuilding the GL program.
   const target = useRef({ scene, level, lively });
-  target.current = { scene, level, lively };
+  useEffect(() => {
+    target.current = { scene, level, lively };
+  }, [scene, level, lively]);
 
   useEffect(() => {
     const el = canvas.current;
