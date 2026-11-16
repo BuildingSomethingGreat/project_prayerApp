@@ -21,7 +21,7 @@ body,
 
 body {
   margin: 0;
-  background: var(--taupe-600);
+  background: var(--cocoa-950);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: var(--size-body);
@@ -102,17 +102,12 @@ p {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: var(--taupe-600);
-}
-
-.backdrop__glow {
-  position: absolute;
-  background: radial-gradient(closest-side, rgb(255 208 156 / 0.75), rgb(255 190 130 / 0) 100%);
-  filter: blur(46px);
+  background: var(--cocoa-950);
 }
 
 .backdrop__window {
   position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 
@@ -154,16 +149,6 @@ p {
      saturated. Lightest through the middle, where the light should show. */
   background: linear-gradient(180deg, rgb(26 6 14 / 0.74) 0%, rgb(30 8 14 / 0.34) 36%, rgb(28 7 13 / 0.46) 70%, rgb(16 4 9 / 0.9) 100%);
   transition: opacity var(--slow) ease;
-}
-
-.backdrop__rim {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow:
-    inset 0 0 46px 4px rgb(255 228 196 / 0.34),
-    inset 0 -40px 90px rgb(255 214 160 / 0.22);
 }
 
 /* Film grain over everything, glass included. Two passes: a fine tooth that
@@ -441,7 +426,7 @@ p {
 }
 
 .splash__mark {
-  font-size: clamp(2.4rem, 1.9rem + 1.6vw, 3.2rem);
+  font-size: clamp(3rem, 2.2rem + 3.4vw, 5.5rem);
   font-weight: 350;
   letter-spacing: 0.01em;
   color: var(--cream-50);
@@ -450,9 +435,9 @@ p {
 
 .splash__line {
   margin-top: var(--space-2);
-  font-size: var(--size-small);
+  font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.125rem);
   letter-spacing: 0.04em;
-  color: rgb(255 246 234 / 0.82);
+  color: rgb(255 246 234 / 0.86);
 }
 
 /* ── Onboarding ────────────────────────────────────────────────────────── */

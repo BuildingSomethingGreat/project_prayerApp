@@ -22,9 +22,9 @@ const SCREENS: Record<Screen, () => React.JSX.Element | null> = {
   player: Player,
 };
 
-/** How much each screen darkens the light behind it. Reading screens need more; the splash needs none. */
+/** How much each screen darkens the light behind it. Reading screens need more; the opener needs least. */
 const DIM: Record<Screen, number> = {
-  splash: 0,
+  splash: 0.3,
   onboarding: 0.85,
   home: 0.95,
   intention: 0.95,
@@ -36,7 +36,7 @@ const DIM: Record<Screen, number> = {
 
 /** How bright the drifting light behind the controls is on each screen. */
 const GLOW: Record<Screen, number> = {
-  splash: 0,
+  splash: 0.3,
   onboarding: 0.4,
   home: 0.45,
   intention: 0.45,
@@ -71,7 +71,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
-        <Backdrop scene={scene} photo={photo} orb={screen === "splash"} dim={DIM[screen]} />
+        <Backdrop scene={scene} photo={photo} dim={DIM[screen]} />
         <GlowField scene={scene} level={GLOW[screen]} lively={speaking} />
         <div className="stage">
           <AnimatePresence mode="wait" initial={false}>

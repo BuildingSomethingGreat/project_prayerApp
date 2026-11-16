@@ -23,7 +23,7 @@ Bold, saturated light over deep wine-dark grounds. The colour lives in the light
 | `--text-soft` | cream at 68% | Body copy, secondary labels |
 | `--text-faint` | cream at 42% | Second line of headings, hints, eyebrows |
 | `--cocoa-900` | `#1e0a10` | Text on cream buttons |
-| `--taupe-600` | `#4a2f2a` | The page behind the splash window; browser theme colour |
+| `--cocoa-950` | `#12050a` | The ground beneath the light; browser theme colour |
 | `--flame-500`, `--amber-400`, `--rose-300`, `--violet-500` | `#ff4d1f`, `#ff8a2a`, `#ff5c8a`, `#6a2bd9` | The palette of the light, for reference. Use in the interface sparingly. |
 | `--amber-300` | `#ffc46b` | Focus rings, the breathing loader |
 | `--glass` → `--glass-press` | cream at 11% → 27% | Translucent surfaces, resting to pressed |
@@ -44,7 +44,7 @@ Four looping backdrops, each with a mood. Sessions choose one by theme. The firs
 
 ### Keeping text readable
 
-Text is always cream on a darkened scene. `Backdrop` lays a scrim over the video, and each screen sets how strong it is (`DIM` in `App.tsx`): none on the splash, most in the player.
+Text is always cream on a darkened scene. `Backdrop` lays a scrim over the video, and each screen sets how strong it is (`DIM` in `App.tsx`): lightest on the opener, strongest on the screens she reads and types on.
 
 The scrim is a deep **wine-black** gradient. It darkens for legibility without browning the colour underneath, and it is heavier at the top and bottom, where the controls sit, and lightest through the middle, where the light should show.
 
@@ -73,7 +73,7 @@ A photograph is never shown in its own colours. `Backdrop` lays it over the movi
 - The field is read three ways: a long, faint halo, a defined body, and a hot core. Colour runs from a deep rim to a bright heart using three colours per scene (`PALETTES`).
 - The shader adds its own grain and fades to nothing before it reaches the words.
 
-One canvas serves every screen and is blended with `screen`, so it behaves as light. Its strength is set per screen (`GLOW` in `App.tsx`): off on the splash, quiet behind forms, full in the player. Changes of screen, scene and strength all ease over about a second, so the light turns rather than cuts. While the voice is speaking it moves and breathes a little more, and on desktop one source leans gently towards the pointer.
+One canvas serves every screen and is blended with `screen`, so it behaves as light. Its strength is set per screen (`GLOW` in `App.tsx`): faint on the opener, quiet behind forms, full in the player. Changes of screen, scene and strength all ease over about a second, so the light turns rather than cuts. While the voice is speaking it moves and breathes a little more, and on desktop one source leans gently towards the pointer.
 
 It renders at half resolution (the forms are soft, so this is invisible), pauses when the tab is hidden, holds still under `prefers-reduced-motion`, and falls back to a static CSS wash where WebGL is unavailable.
 
@@ -96,7 +96,7 @@ Every page spans the window and keeps its content in a centred column of `--meas
 - **Scripture** opens as a drawer from the right instead of a sheet from the bottom.
 - Buttons take their natural width, and pointer devices get hover states (`@media (hover: hover)`), which touch devices never see.
 
-The splash window is sized from the shorter side of the viewport, so it is the same tall rounded shape on any screen. A short-height rule tightens the player for a phone on its side.
+The opener is full-bleed at every size. A short-height rule tightens the player for a phone on its side.
 
 Display and lyric sizes are fluid (`clamp`) between phone and desktop, so there are no jumps at the breakpoints.
 
@@ -145,8 +145,8 @@ Both are self-hosted through `@fontsource-variable`, so they work offline and ma
 
 The catalogue:
 
-- **Splash.** The light breathes inside a rounded window with a frosted inner edge; the wordmark resolves from blurred, wide tracking. The window itself then grows to fill the screen as the first page arrives.
-- **Pages** (`components/Page.tsx`). Enter with a fade and a 16px drift in the direction of travel; exit faster than they enter. Only opacity and position animate. Animating blur over blurred glass stuttered, so it was removed. The first page waits for the splash window to finish opening.
+- **Opener.** The light fills the whole screen from the first frame, rising out of the dark and settling from a slight zoom while the wordmark resolves from blurred, wide tracking. The same backdrop carries straight into the first page, so the opener and the app are one continuous shot.
+- **Pages** (`components/Page.tsx`). Enter with a fade and a 16px drift in the direction of travel; exit faster than they enter. Only opacity and position animate. Animating blur over blurred glass stuttered, so it was removed.
 - **Rise.** Content within a page arrives in sequence, 80ms apart.
 - **Press.** Buttons scale to 0.975, icon buttons to 0.9.
 - **Lyrics.** The current line brightens and grows 1.5% over 600ms; the list glides to keep it just above centre.

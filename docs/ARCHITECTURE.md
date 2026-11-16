@@ -85,7 +85,7 @@ Things worth knowing before changing it:
 
 ## Backdrop and motion
 
-`Backdrop` sits behind every screen and never unmounts, so navigating never flashes or reloads video. Scenes cross-fade when the store's `scene` changes, and an optional photograph (`photo` in the store) is multiplied into the light; see [STYLING.md](STYLING.md#photographs). On the splash the backdrop's window is a rounded shape in the middle of the screen, and that same element grows to fill the screen as the first transition. The splash and the app are one continuous shot.
+`Backdrop` sits behind every screen and never unmounts, so navigating never flashes or reloads video. Scenes cross-fade when the store's `scene` changes, and an optional photograph (`photo` in the store) is multiplied into the light; see [STYLING.md](STYLING.md#photographs). The opener shows it edge to edge with only the wordmark over it, and the same element carries into the first page, so the opener and the app are one continuous shot.
 
 The loops are made by `scripts/make_loops.py` from four gradient stills generated with Higgsfield. Each frame samples the still through a displacement field of sinusoids that complete a whole number of cycles over the clip, so the last frame flows into the first with no cut. Each loop is 20 seconds, 540×960, and about 400 KB.
 
@@ -114,6 +114,6 @@ The name appears in: `index.html`, the manifest in `vite.config.ts`, the wordmar
 
 ## What has and has not been exercised
 
-Verified in a headless browser at phone, tablet and desktop sizes: the whole flow from splash to "Amen", local composition, device-voice playback, and the narration path against a mocked `/api/speak` (sync, seeking, pause, "Hear it", caching).
+Verified in a headless browser at phone, tablet and desktop sizes: the whole flow from the opener to "Amen", local composition, device-voice playback, and the narration path against a mocked `/api/speak` (sync, seeking, pause, "Hear it", caching).
 
 Not yet run against the live services, because no keys were available during the build: the Claude call in `server/compose.ts` and the ElevenLabs call in `server/speech.ts`. Both type-check against the current SDK and API shapes, and both fail safe to the local paths. The default ElevenLabs voice ids in `speech.ts` are placeholders to audition and replace.
