@@ -29,6 +29,11 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
+            urlPattern: /\/media\/photos\/.*\.jpg$/,
+            handler: "CacheFirst",
+            options: { cacheName: "liora-photos", cacheableResponse: { statuses: [200] } },
+          },
+          {
             // The looping backdrops. App.tsx fills this cache with whole files;
             // the range plugin then answers the <video> element's byte-range requests from it.
             urlPattern: /\/media\/.*\.mp4$/,

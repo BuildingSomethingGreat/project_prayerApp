@@ -49,9 +49,48 @@ The scrim is a **red-brown** gradient, not black. Black over the pale scenes tur
 
 ## Grain
 
-A fixed SVG noise layer (`.grain`) sits above everything, including glass and sheets, at 20% with `soft-light` blending. It does three jobs: it gives the matte, analogue texture from the references, it ties video and UI into one surface, and it hides banding in the gradients.
+Grain is a large part of the look, so it is deliberately visible. Two fixed SVG noise layers (`.grain`) sit above everything, including glass and sheets: a fine, high-contrast tooth blended with `overlay`, and a coarser pass blended with `soft-light`. The fine layer shifts position a few times a second so it reads as film rather than as a texture stuck to the glass. It gives the matte, analogue surface from the references, ties video, photographs and UI into one image, and hides banding in the gradients.
 
 The loops themselves are blurred and grain-free. Grain baked into video would swim as the image moves, and would triple the file size.
+
+## Photographs
+
+Fifteen public-domain photographs live in `public/media/photos/`: one for each of the twelve themes and three for onboarding. Sources and photographers are in [CREDITS.md](CREDITS.md).
+
+A photograph is never shown in its own colours. `Backdrop` lays it over the moving gradient in greyscale with `mix-blend-mode: multiply`, so it keeps its shapes and takes its colour, and its slow movement, from the light behind it. That is what lets fifteen unrelated images look like one set. Each also drifts in from a slight zoom.
+
+- Photographs appear behind onboarding (one per slide) and in the player (by theme), and as thumbnails on Home. Screens where she types or chooses stay as pure light.
+- The same image has to fill a tall phone and a wide desktop. `PHOTO_FOCUS` in `src/content/photos.ts` anchors each crop on its subject.
+- Choose images with a clear silhouette against a bright ground. Evenly lit, high-key photographs turn to blotches under multiply.
+
+## Glow
+
+`components/Glow.tsx` puts three slow, morphing shapes behind the controls at the foot of the screen, to give the interface depth. Each is a warm gradient with a light blur for a soft edge and a `drop-shadow` for the halo, and the group is blended with `screen` so it behaves like light. They drift, rotate and change outline on cycles of 19 to 29 seconds that never line up.
+
+The player shows the glow at full strength, and its core pulses a little faster while the voice is speaking. Other screens show a quieter version behind the primary button (`<Page>` adds it unless `glow={false}`).
+
+## Layout across screens
+
+Layout is mobile-first, with two breakpoints in `app.css`.
+
+| Width | What changes |
+| --- | --- |
+| under 700px | One column, 24px gutters, full-width buttons |
+| 700px and up | A roomier column (580px) for tablets and small windows |
+| 1000px and up | Desktop layouts, below |
+
+Every page spans the window and keeps its content in a centred column of `--measure`, so the light and photographs are always full-bleed. On desktop:
+
+- **Onboarding** sets the words low and left over a full-bleed photograph. Arrow keys move between slides.
+- **Intention and Voice** split in two: the question on the left, the answer on the right.
+- **Home** puts the greeting and today's word on the left and her moments on the right.
+- **Player** becomes three columns: the parts of the session on the left, the words in the middle at a larger size, and keyboard help on the right. Space plays and pauses, left and right move by line, up and down move by part.
+- **Scripture** opens as a drawer from the right instead of a sheet from the bottom.
+- Buttons take their natural width, and pointer devices get hover states (`@media (hover: hover)`), which touch devices never see.
+
+The splash window is sized from the shorter side of the viewport, so it is the same tall rounded shape on any screen. A short-height rule tightens the player for a phone on its side.
+
+Display and lyric sizes are fluid (`clamp`) between phone and desktop, so there are no jumps at the breakpoints.
 
 ## Type
 
@@ -64,8 +103,8 @@ Both are self-hosted through `@fontsource-variable`, so they work offline and ma
 
 | Token | Size | Use |
 | --- | --- | --- |
-| `--size-display` | 40–52px, fluid | Screen headings |
-| `--size-lyric` | 22–27px, fluid | Lines in the player |
+| `--size-display` | 42–78px, fluid | Screen headings |
+| `--size-lyric` | 23–40px, fluid | Lines in the player |
 | `--size-title` | 28px | Section titles |
 | `--size-body` | 17px | Copy, buttons |
 | `--size-small` | 14px | Secondary labels |
@@ -80,7 +119,7 @@ Both are self-hosted through `@fontsource-variable`, so they work offline and ma
 - Radii: `--radius-s` 14, `--radius-m` 22, `--radius-l` 32, and `--radius-pill`. Cards and inputs use `l`; buttons and chips are pills; nothing has a sharp corner.
 - Spacing is on a 4px base (`--space-1` … `--space-7`). The page gutter is 24px.
 - Primary buttons are 58px tall; every tap target is at least 44px.
-- Content is a single column capped at 480px, so the app reads as a phone on any screen while the backdrop fills the window.
+- Content sits in a centred column whose width (`--measure`) grows at each breakpoint; see Layout across screens.
 - Safe-area insets are respected top and bottom.
 
 ## Glass
@@ -98,7 +137,7 @@ Both are self-hosted through `@fontsource-variable`, so they work offline and ma
 
 The catalogue:
 
-- **Splash.** The light breathes inside a rounded window; the wordmark resolves from blurred, wide tracking. The window then opens to fill the screen as the first page arrives.
+- **Splash.** The light breathes inside a rounded window with a frosted inner edge; the wordmark resolves from blurred, wide tracking. The window itself then grows to fill the screen as the first page arrives.
 - **Pages** (`components/Page.tsx`). Enter with fade, an 18px drift in the direction of travel, and a blur clearing. Exit faster than they enter.
 - **Rise.** Content within a page arrives in sequence, 80ms apart.
 - **Press.** Buttons scale to 0.975, icon buttons to 0.9.

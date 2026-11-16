@@ -42,34 +42,37 @@ export function Intention() {
         )}
       </header>
 
-      <div className="form">
-        <Rise>
+      <div className="split">
+        <Rise className="split__lead">
           <h1 className="display">
             What's on
             <span>your heart?</span>
           </h1>
+          <p className="lede wide-only">Write as much or as little as you like. Liora will shape a moment of prayer around it.</p>
         </Rise>
 
-        <Rise delay={0.08} className="glass field">
-          <label className="sr-only" htmlFor="intention">
-            What's on your heart?
-          </label>
-          <textarea id="intention" ref={field} value={intention} maxLength={MAX} placeholder="A worry, a dream, a name, a thank-you…" onChange={(e) => setIntention(e.target.value)} />
-          <small>Only used to write your prayer.</small>
-        </Rise>
+        <div className="split__body">
+          <Rise delay={0.08} className="glass field">
+            <label className="sr-only" htmlFor="intention">
+              What's on your heart?
+            </label>
+            <textarea id="intention" ref={field} value={intention} maxLength={MAX} placeholder="A worry, a dream, a name, a thank-you…" onChange={(e) => setIntention(e.target.value)} />
+            <small>Only used to write your prayer.</small>
+          </Rise>
 
-        <Rise delay={0.16} className="chips">
-          {PROMPT_CHIPS.map((id) => (
-            <button key={id} className="chip" aria-pressed={themeHint === id} onClick={() => choose(id)}>
-              {THEME_BY_ID[id].label}
-            </button>
-          ))}
-        </Rise>
+          <Rise delay={0.16} className="chips">
+            {PROMPT_CHIPS.map((id) => (
+              <button key={id} className="chip" aria-pressed={themeHint === id} onClick={() => choose(id)}>
+                {THEME_BY_ID[id].label}
+              </button>
+            ))}
+          </Rise>
 
-        <div className="spacer" />
-        <button className="btn" disabled={!ready} onClick={() => go("voice")}>
-          Continue
-        </button>
+          <div className="spacer" />
+          <button className="btn" disabled={!ready} onClick={() => go("voice")}>
+            Continue
+          </button>
+        </div>
       </div>
     </Page>
   );

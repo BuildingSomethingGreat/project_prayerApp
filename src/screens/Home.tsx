@@ -1,5 +1,6 @@
-import { Page, Rise } from "../components/Page";
 import { Plus } from "../components/Icons";
+import { Page, Rise } from "../components/Page";
+import { PHOTO_FOCUS, photoUrl } from "../content/photos";
 import { TRANSLATION, verseOfTheDay } from "../content/verses";
 import { useApp } from "../lib/store";
 import type { Session } from "../lib/types";
@@ -42,51 +43,60 @@ export function Home() {
         </button>
       </header>
 
-      <Rise className="home__greeting">
-        <h1 className="display">
-          {hello}
-          <span>{invite}</span>
-        </h1>
-      </Rise>
+      <div className="home__grid">
+        <section className="home__lead">
+          <Rise>
+            <h1 className="display">
+              {hello}
+              <span>{invite}</span>
+            </h1>
+          </Rise>
 
-      <Rise delay={0.08}>
-        <article className="glass verse-card">
-          <span className="eyebrow">Today's word</span>
-          <p className="scripture">{verse.text}</p>
-          <cite>
-            {verse.ref} · {TRANSLATION.abbreviation}
-          </cite>
-        </article>
-      </Rise>
+          <Rise delay={0.08}>
+            <article className="glass verse-card">
+              <span className="eyebrow">Today's word</span>
+              <p className="scripture">{verse.text}</p>
+              <cite>
+                {verse.ref} · {TRANSLATION.abbreviation}
+              </cite>
+            </article>
+          </Rise>
 
-      <Rise delay={0.16}>
-        <button className="btn" onClick={begin}>
-          Begin a new moment
-        </button>
-      </Rise>
+          <Rise delay={0.16}>
+            <button className="btn" onClick={begin}>
+              Begin a new moment
+            </button>
+          </Rise>
+        </section>
 
-      <Rise delay={0.24}>
-        <h2 className="eyebrow" style={{ marginBottom: 12 }}>
-          Your moments
-        </h2>
-        {sessions.length === 0 ? (
-          <p className="empty">The moments you create will rest here, ready to return to.</p>
-        ) : (
-          <div className="moments">
-            {sessions.map((session) => (
-              <button key={session.id} className="moment" onClick={() => open(session)}>
-                <img className="moment__art" src={`/media/${session.scene}.jpg`} alt="" loading="lazy" />
-                <span className="moment__text">
-                  <strong>{session.title}</strong>
-                  <span>
-                    {session.subtitle} · {when(session)}
-                  </span>
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-      </Rise>
+        <Rise delay={0.24}>
+          <section>
+            <h2 className="eyebrow" style={{ marginBottom: 12 }}>
+              Your moments
+            </h2>
+            {sessions.length === 0 ? (
+              <p className="empty">The moments you create will rest here, ready to return to.</p>
+            ) : (
+              <div className="moments">
+                {sessions.map((session) => (
+                  <button key={session.id} className="moment" onClick={() => open(session)}>
+                    <span className="moment__art">
+                      <img src={`/media/${session.scene}.jpg`} alt="" loading="lazy" />
+                      <img src={photoUrl(session.theme)} style={{ objectPosition: PHOTO_FOCUS[session.theme] }} alt="" loading="lazy" />
+                    </span>
+                    <span className="moment__text">
+                      <strong>{session.title}</strong>
+                      <span>
+                        {session.subtitle} · {when(session)}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        </Rise>
+      </div>
     </Page>
   );
 }

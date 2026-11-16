@@ -52,59 +52,62 @@ export function Voice() {
         </button>
       </header>
 
-      <div className="form">
-        <Rise>
+      <div className="split">
+        <Rise className="split__lead">
           <h1 className="display">
             Choose
             <span>a voice.</span>
           </h1>
+          <p className="lede wide-only">Tap a voice to hear it. You can choose a different one next time.</p>
         </Rise>
 
-        <Rise delay={0.08} className="voices">
-          <div role="radiogroup" aria-label="Voice" className="voices">
-            {VOICES.map((v) => (
-              <button key={v.id} className="glass voice" role="radio" aria-checked={voice === v.id} onClick={() => choose(v.id)}>
-                <span className="voice__orb">
-                  <img src={`/media/${v.art}.jpg`} alt="" />
-                  {sample?.id === v.id ? (
-                    sample.state === "loading" ? (
-                      <span className="spinner" />
+        <div className="split__body">
+          <Rise delay={0.08}>
+            <div role="radiogroup" aria-label="Voice" className="voices">
+              {VOICES.map((v) => (
+                <button key={v.id} className="glass voice" role="radio" aria-checked={voice === v.id} onClick={() => choose(v.id)}>
+                  <span className="voice__orb">
+                    <img src={`/media/${v.art}.jpg`} alt="" />
+                    {sample?.id === v.id ? (
+                      sample.state === "loading" ? (
+                        <span className="spinner" />
+                      ) : (
+                        <span className="bars">
+                          <i />
+                          <i />
+                          <i />
+                        </span>
+                      )
                     ) : (
-                      <span className="bars">
-                        <i />
-                        <i />
-                        <i />
-                      </span>
-                    )
-                  ) : (
-                    <Play size={20} />
-                  )}
-                </span>
-                <span className="voice__text">
-                  <strong>{v.name}</strong>
-                  <span>{v.tone}</span>
-                </span>
-                <span className="voice__check">{voice === v.id && <Check />}</span>
-              </button>
-            ))}
-          </div>
-        </Rise>
+                      <Play size={20} />
+                    )}
+                  </span>
+                  <span className="voice__text">
+                    <strong>{v.name}</strong>
+                    <span>{v.tone}</span>
+                  </span>
+                  <span className="voice__check">{voice === v.id && <Check />}</span>
+                </button>
+              ))}
+            </div>
+          </Rise>
 
-        <Rise delay={0.16}>
-          <div className="glass segmented" role="radiogroup" aria-label="Length">
-            <motion.span className="segmented__thumb" animate={{ x: length === "short" ? "0%" : "100%" }} transition={{ type: "spring", stiffness: 420, damping: 38 }} />
-            {LENGTHS.map((l) => (
-              <button key={l.id} role="radio" aria-checked={length === l.id} onClick={() => setLength(l.id)}>
-                {l.label}
-              </button>
-            ))}
-          </div>
-        </Rise>
+          <Rise delay={0.16}>
+            <div className="glass segmented" role="radiogroup" aria-label="Length">
+              <motion.span className="segmented__thumb" animate={{ x: length === "short" ? "0%" : "100%" }} transition={{ type: "spring", stiffness: 420, damping: 38 }} />
+              {LENGTHS.map((l) => (
+                <button key={l.id} role="radio" aria-checked={length === l.id} onClick={() => setLength(l.id)}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </Rise>
 
-        <div className="spacer" />
-        <button className="btn" onClick={create}>
-          Create my moment
-        </button>
+          <div className="spacer" />
+          <button className="btn" onClick={create}>
+            Create my moment
+          </button>
+        </div>
       </div>
     </Page>
   );

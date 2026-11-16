@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Book, ChevronDown, Next, Pause, Play, Prev, Waves } from "../components/Icons";
+import { Glow } from "../components/Glow";
 import { ScriptureSheet } from "../components/ScriptureSheet";
 import { sessionVerses } from "../content/compose";
 import { getCapabilities } from "../lib/api";
@@ -112,12 +113,32 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
     };
   }, [engine, session, narrator]);
 
+  // Desktop: the keyboard drives the player.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.target instanceof HTMLInputElement) return;
+      const snap = engine.getSnapshot();
+      if (e.key === " ") engine.toggle();
+      else if (e.key === "ArrowRight") engine.seekLine(snap.line + 1);
+      else if (e.key === "ArrowLeft") engine.seekLine(snap.line - 1);
+      else if (e.key === "ArrowDown") engine.nextSegment();
+      else if (e.key === "ArrowUp") engine.prevSegment();
+      else if (e.key === "Escape") setSheet(false);
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [engine]);
+
   const close = () => go(hasHome ? "home" : "intention", -1);
   const fill = `${state.duration ? (state.time / state.duration) * 100 : 0}%`;
   const waiting = state.status === "loading" || state.status === "buffering";
+  const readBy = state.mode === "voice" ? `Read by ${narrator}` : "Read by your device's voice";
 
   return (
     <>
+      <Glow lively={sounding} />
       <header className="topbar">
         <button className="icon-btn" onClick={close} aria-label="Close">
           <ChevronDown />
@@ -131,45 +152,70 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
         </button>
       </header>
 
-      <div className="lyrics" ref={lyrics}>
-        <div className="lyrics__inner">
-          {session.segments.map((segment, seg) => {
-            const span = engine.spans[seg];
-            return (
-              <Fragment key={seg}>
-                <p className="eyebrow lyrics__label">{segment.title}</p>
-                {segment.lines.map((text, i) => {
-                  const index = span.first + i;
-                  const line = engine.lines[index];
-                  const now = index === state.line;
-                  return (
-                    <button
-                      key={index}
-                      ref={now ? active : undefined}
-                      className={`lyric${line.verse ? " scripture" : ""}`}
-                      data-state={now ? "now" : index < state.line ? "past" : "next"}
-                      aria-current={now}
-                      onClick={() => engine.seekLine(index)}
-                    >
-                      {text}
-                    </button>
-                  );
-                })}
-              </Fragment>
-            );
-          })}
+      <div className="player__body">
+        <aside className="player__side">
+          <span className="eyebrow">In this moment</span>
+          <nav className="tracks" aria-label="Parts of this moment">
+            {session.segments.map((segment, seg) => (
+              <button key={seg} className="track" aria-current={seg === state.seg} onClick={() => engine.seekSegment(seg)}>
+                <small>{String(seg + 1).padStart(2, "0")}</small>
+                {segment.title}
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        <div className="lyrics" ref={lyrics}>
+          <div className="lyrics__inner">
+            {session.segments.map((segment, seg) => {
+              const span = engine.spans[seg];
+              return (
+                <Fragment key={seg}>
+                  <p className="eyebrow lyrics__label">{segment.title}</p>
+                  {segment.lines.map((text, i) => {
+                    const index = span.first + i;
+                    const line = engine.lines[index];
+                    const now = index === state.line;
+                    return (
+                      <button
+                        key={index}
+                        ref={now ? active : undefined}
+                        className={`lyric${line.verse ? " scripture" : ""}`}
+                        data-state={now ? "now" : index < state.line ? "past" : "next"}
+                        aria-current={now}
+                        onClick={() => engine.seekLine(index)}
+                      >
+                        {text}
+                      </button>
+                    );
+                  })}
+                </Fragment>
+              );
+            })}
+          </div>
         </div>
+
+        <aside className="player__side">
+          <p className="mode-note" style={{ textAlign: "left" }}>
+            {readBy}
+          </p>
+          <div className="keys">
+            <span>
+              <kbd>Space</kbd>Play or pause
+            </span>
+            <span>
+              <kbd>←</kbd>
+              <kbd>→</kbd>Previous or next line
+            </span>
+            <span>
+              <kbd>↑</kbd>
+              <kbd>↓</kbd>Previous or next part
+            </span>
+          </div>
+        </aside>
       </div>
 
       <footer className="player__dock">
-        <nav className="tracks" aria-label="Parts of this moment">
-          {session.segments.map((segment, seg) => (
-            <button key={seg} className="track" aria-current={seg === state.seg} onClick={() => engine.seekSegment(seg)}>
-              {segment.title}
-            </button>
-          ))}
-        </nav>
-
         <div className="scrub">
           <input
             type="range"
@@ -206,7 +252,7 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
           </button>
         </div>
 
-        <p className="mode-note">{state.mode === "voice" ? `Read by ${narrator}` : `Read by your device's voice`}</p>
+        <p className="mode-note">{readBy}</p>
       </footer>
 
       <AnimatePresence>

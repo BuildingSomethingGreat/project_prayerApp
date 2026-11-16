@@ -24,12 +24,13 @@ const SCREENS: Record<Screen, () => React.JSX.Element | null> = {
 /** How much each screen darkens the light behind it. Reading screens need more; the splash needs none. */
 const DIM: Record<Screen, number> = {
   splash: 0,
-  onboarding: 0.8,
+  onboarding: 0.85,
   home: 0.95,
   intention: 0.95,
   voice: 0.95,
   creating: 0.7,
-  player: 1,
+  // The photograph is already multiplied dark; a lighter veil keeps its subject readable.
+  player: 0.66,
 };
 
 const MEDIA = ["dawn", "ember", "honey", "dusk"].flatMap((scene) => [`/media/${scene}.mp4`, `/media/${scene}.jpg`]);
@@ -37,6 +38,7 @@ const MEDIA = ["dawn", "ember", "honey", "dusk"].flatMap((scene) => [`/media/${s
 export default function App() {
   const screen = useApp((s) => s.screen);
   const scene = useApp((s) => s.scene);
+  const photo = useApp((s) => s.photo);
   const Current = SCREENS[screen];
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
-        <Backdrop scene={scene} orb={screen === "splash"} dim={DIM[screen]} />
+        <Backdrop scene={scene} photo={photo} orb={screen === "splash"} dim={DIM[screen]} />
         <div className="stage">
           <AnimatePresence mode="wait" initial={false}>
             <Current key={screen} />

@@ -26,9 +26,9 @@
   /* Type */
   --font-sans: "Outfit Variable", "Outfit", ui-rounded, system-ui, sans-serif;
   --font-serif: "Newsreader Variable", "Newsreader", "Iowan Old Style", Georgia, serif;
-  --size-display: clamp(2.5rem, 11vw, 3.25rem);
+  --size-display: clamp(2.6rem, 2rem + 3.4vw, 4.9rem);
   --size-title: 1.75rem;
-  --size-lyric: clamp(1.4rem, 6.2vw, 1.7rem);
+  --size-lyric: clamp(1.45rem, 1.05rem + 1.6vw, 2.5rem);
   --size-body: 1.0625rem;
   --size-small: 0.875rem;
   --size-micro: 0.75rem;
@@ -41,6 +41,8 @@
 
   /* Space — a 4px base */
   --gutter: 24px;
+  /* Width of the content column. Screens widen it at the breakpoints in app.css. */
+  --measure: 480px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
