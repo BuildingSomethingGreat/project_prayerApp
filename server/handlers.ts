@@ -2,7 +2,7 @@ import { composeLocally } from "../src/content/compose.ts";
 import { THEME_BY_ID } from "../src/content/themes.ts";
 import type { ComposeRequest, SessionLength, VoiceId } from "../src/lib/types.ts";
 import { canCompose, composeWithClaude } from "./compose.ts";
-import { canSpeak, speak } from "./speech.ts";
+import { canSpeak, speak, SpeechError } from "./speech.ts";
 
 /**
  * The API, independent of how it is hosted. `server/index.ts` mounts these on
@@ -49,6 +49,7 @@ export async function speech(body: Body): Promise<Reply> {
     return { status: 200, body: await speak(lines, voice) };
   } catch (error) {
     console.error("speak failed:", error instanceof Error ? error.message : error);
-    return { status: 502, body: { error: "The voice is unavailable right now." } };
+    const reason = error instanceof SpeechError ? `${error.status} ${error.reason}` : "unreachable";
+    return { status: 502, body: { error: "The voice is unavailable right now.", reason } };
   }
 }

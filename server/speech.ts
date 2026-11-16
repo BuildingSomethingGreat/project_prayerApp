@@ -25,6 +25,28 @@ export interface SpokenSegment {
   duration: number;
 }
 
+/**
+ * A refusal from the voice service. `reason` is the service's own short status
+ * word (for example "quota_exceeded" or "voice_not_found"): safe to show, and
+ * enough to tell a bad key from a missing voice without reading server logs.
+ */
+export class SpeechError extends Error {
+  readonly status: number;
+  readonly reason: string;
+  constructor(status: number, body: string) {
+    let reason = "unknown";
+    try {
+      const detail = JSON.parse(body)?.detail;
+      reason = String(detail?.status ?? detail?.code ?? (typeof detail === "string" ? detail : reason)).slice(0, 80);
+    } catch {
+      // Not JSON; the status code alone will have to do.
+    }
+    super(`ElevenLabs ${status}: ${reason}`);
+    this.status = status;
+    this.reason = reason;
+  }
+}
+
 export function canSpeak(): boolean {
   return Boolean(process.env.ELEVENLABS_API_KEY);
 }
@@ -48,7 +70,7 @@ export async function speak(lines: string[], voice: VoiceId): Promise<SpokenSegm
       voice_settings: { stability: 0.62, similarity_boost: 0.78, style: 0.08, speed: 0.9 },
     }),
   });
-  if (!res.ok) throw new Error(`ElevenLabs ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok) throw new SpeechError(res.status, await res.text());
 
   const data = (await res.json()) as {
     audio_base64: string;
