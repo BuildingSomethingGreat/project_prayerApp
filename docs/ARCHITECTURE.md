@@ -12,7 +12,7 @@
 │     │                                    ▼  content/compose.ts    │
 │     └─ Player ──► Engine ──► api.speakSegment ─┐                  │
 │                     │                          │ falls back to    │
-│                     └─► SoundBed (Web Audio)   ▼ speechSynthesis  │
+│                     └─► Music (Web Audio)      ▼ speechSynthesis  │
 │                                                                   │
 │  Service worker: app shell precache · media cache · voice cache   │
 └──────────────────────────────┬────────────────────────────────────┘
@@ -64,11 +64,32 @@ The model also returns a `care` flag when what she wrote suggests she may be in 
 
 ## Voice (`server/speech.ts`)
 
-The server sends a segment's lines to ElevenLabs' timestamped endpoint, joined with short breaks, and reads each line's start time off the returned character alignment. The client gets `{ audio, starts, duration }` per segment.
+The server sends a segment's lines to ElevenLabs' timestamped endpoint as one flowing passage, and reads each line's start time off the returned character alignment. The client gets `{ audio, starts, duration }` per segment.
+
+Three things keep the delivery conversational rather than recited:
+
+- **No forced pauses.** An earlier version inserted a fixed break after every line, which sounded choppy. The lines are now joined as prose and the voice paces itself from the punctuation.
+- **Expressive settings** (`DELIVERY` in `server/speech.ts`): lower stability so pitch and pace vary as a person's do, some style for warmth, speaker boost, and a pace just under natural.
+- **Context across segments.** The last lines of the previous segment and the first lines of the next are sent as `previous_text` and `next_text`. They are not spoken; they let the voice continue in the same tone instead of starting cold each time.
+
+The writing prompt asks for the same thing from the other side: lines written for the ear, that carry a thought across two or three lines and vary in length.
 
 The client stores each response in Cache Storage, keyed by a hash of voice and text (`api.speakSegment`). A saved session therefore replays offline and is never synthesised, or billed, twice.
 
 Segment one is fetched before playback starts; the rest load in the background in order.
+
+## Music (`src/lib/music.ts`)
+
+The background music is composed as it plays, with the Web Audio API. Nothing is downloaded and it never loops.
+
+- A **pad** of four voices glides through a four-chord progression (I, vi, IV, V sus), one chord every 16 to 22 seconds.
+- A soft **felt-piano** voice places a note every few seconds, walking mostly by step through the major pentatonic, with an occasional second note from the current chord and occasional longer silences.
+- A low **root note** marks each chord change.
+- Everything passes through a long synthetic reverb and a gentle limiter, and sits well under the voice (about -32 dBFS average in an offline render, against roughly -23 for narration).
+
+Each scene has its own key and pace (`MOODS`): dusk is lower and slower, honey brighter and quicker. The score is written against the audio clock a second ahead of playback (`Score.scheduleUntil`), which also lets it be rendered offline to check levels. The music fades in when the voice starts and out when it pauses, and the player has a toggle for it.
+
+To use a recorded track instead, this module is the one place to change.
 
 ## The engine (`src/lib/engine.ts`)
 

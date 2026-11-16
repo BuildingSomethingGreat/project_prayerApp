@@ -37,7 +37,7 @@ These are the gaps between this build and something to put in front of real user
 
 **Sleep.** Long, slow, low-voiced sessions that fade out, with a timer.
 
-**Music.** Replace the generated pad with composed instrumental beds per scene. Later, licensed worship instrumentals.
+**Music.** The background music is generated in the app. Commission or license recorded instrumental beds per scene, and later worship instrumentals.
 
 **More voices and languages.** Spanish first. Voices with different ages and accents. Possibly her own recorded voice for declarations.
 

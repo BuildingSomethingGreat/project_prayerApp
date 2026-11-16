@@ -43,7 +43,7 @@ const DEVICE_VOICES: Record<VoiceId, { names: string[]; pitch: number; rate: num
   gideon: { names: ["Daniel", "Google UK English Male", "Microsoft Ryan", "Microsoft Guy", "Aaron", "Alex"], pitch: 0.82, rate: 0.84 },
 };
 
-const LINE_GAP = 0.45;
+const LINE_GAP = 0.25;
 
 /** Rough spoken length of a phrase at a slow, calm pace. */
 function estimate(text: string): number {
@@ -306,7 +306,10 @@ export class Engine {
   // ── Narration (server voice) ────────────────────────────────────────────
 
   private load(seg: number): Promise<void> {
-    this.loading[seg] ??= speakSegment(this.session.segments[seg].lines, this.session.voice)
+    // The neighbouring lines are sent as context so the voice flows from one segment into the next.
+    const segments = this.session.segments;
+    const context = { before: segments[seg - 1]?.lines.slice(-2).join(" "), after: segments[seg + 1]?.lines.slice(0, 2).join(" ") };
+    this.loading[seg] ??= speakSegment(segments[seg].lines, this.session.voice, context)
       .then((spoken) => {
         if (this.destroyed) return;
         const bytes = Uint8Array.from(atob(spoken.audio), (c) => c.charCodeAt(0));

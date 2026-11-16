@@ -10,7 +10,7 @@ const MODEL = process.env.LIORA_WRITER_MODEL ?? "claude-opus-5-5";
 
 const verseIds = VERSES.map((v) => v.id) as [string, ...string[]];
 const themeIds = THEMES.map((t) => t.id) as [string, ...string[]];
-const line = z.string().describe("One short spoken phrase, 4 to 16 words.");
+const line = z.string().describe("One natural spoken phrase or sentence, roughly 6 to 20 words, that flows on from the line before.");
 
 /**
  * The model never writes Scripture. It chooses verse ids from the library and
@@ -44,7 +44,12 @@ How a session is built, in order:
 - declare: first-person statements that agree with what Scripture already says about her. Each one should be traceable to a verse. Begin with one line inviting her to say them aloud or in her heart.
 - bless: two lines sending her back into her day or night.
 
-Every line is one spoken phrase of 4 to 16 words, complete on its own, because each is shown and spoken as a single lyric line. No lists, no headings, no emoji, no stage directions.
+Write for the ear. This is heard, not read, so it should sound like someone speaking to her, not like a poem or a list:
+- Each line is one natural spoken phrase or sentence of roughly 6 to 20 words. Each is shown as a single lyric line, so it must make sense alone.
+- The lines of a section are spoken as one continuous passage. Let them flow into one another: carry a thought across two or three lines, begin some with "And", "So", "Because", "Even now", and use contractions where a person would.
+- Vary the rhythm. Follow a longer line with a short one. Avoid a run of lines that all have the same shape or the same opening word.
+- Use commas where a speaker would breathe. Avoid dashes, semicolons, parentheses, ellipses and anything else that does not sound like speech.
+No lists, no headings, no emoji, no stage directions.
 
 Scripture and theology:
 - Never write out a Bible verse or put words in quotation marks as Scripture. You may allude to the chosen verses in plain language.

@@ -41,13 +41,13 @@ async function digest(text: string): Promise<string> {
   return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-const AUDIO_CACHE = "liora-voice-v1";
+const AUDIO_CACHE = "liora-voice-v2";
 
 /**
  * Spoken audio for one segment. Kept in Cache Storage so a saved session
  * replays offline and is never synthesised (or billed) twice.
  */
-export async function speakSegment(lines: string[], voice: VoiceId): Promise<SpokenSegment> {
+export async function speakSegment(lines: string[], voice: VoiceId, context: { before?: string; after?: string } = {}): Promise<SpokenSegment> {
   const key = `/voice-cache/${await digest(`${voice}\n${lines.join("\n")}`)}`;
   const cache = "caches" in window ? await caches.open(AUDIO_CACHE).catch(() => undefined) : undefined;
   const hit = await cache?.match(key);
@@ -56,7 +56,7 @@ export async function speakSegment(lines: string[], voice: VoiceId): Promise<Spo
   const spoken = await request<SpokenSegment>("/api/speak", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ lines, voice }),
+    body: JSON.stringify({ lines, voice, ...context }),
   });
   await cache?.put(key, new Response(JSON.stringify(spoken), { headers: { "content-type": "application/json" } })).catch(() => {});
   return spoken;

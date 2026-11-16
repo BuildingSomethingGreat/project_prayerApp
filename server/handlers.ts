@@ -46,7 +46,8 @@ export async function speech(body: Body): Promise<Reply> {
   const voice: VoiceId = VOICES.includes(body?.voice as VoiceId) ? (body?.voice as VoiceId) : "naomi";
   if (!lines.length || lines.join(" ").length > 4000) return { status: 400, body: { error: "Nothing to speak, or too much at once." } };
   try {
-    return { status: 200, body: await speak(lines, voice) };
+    const hint = (value: unknown) => (typeof value === "string" ? value.slice(0, 400) : undefined);
+    return { status: 200, body: await speak(lines, voice, { before: hint(body?.before), after: hint(body?.after) }) };
   } catch (error) {
     console.error("speak failed:", error instanceof Error ? error.message : error);
     const reason = error instanceof SpeechError ? `${error.status} ${error.reason}` : "unreachable";

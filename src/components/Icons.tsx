@@ -68,7 +68,7 @@ export const Book = (p: P) => (
   </Icon>
 );
 
-/** Sound bed on. */
+/** Background music. */
 export const Waves = (p: P) => (
   <Icon {...p}>
     <path d="M4 14c2.2 0 2.2-4 4.4-4s2.200 4 4.400 4 2.200-4 4.400-4S19.400 14 20 14" />

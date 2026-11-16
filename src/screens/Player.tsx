@@ -5,7 +5,7 @@ import { ScriptureSheet } from "../components/ScriptureSheet";
 import { sessionVerses } from "../content/compose";
 import { getCapabilities } from "../lib/api";
 import { Engine } from "../lib/engine";
-import { SoundBed } from "../lib/soundbed";
+import { Music } from "../lib/music";
 import { useApp } from "../lib/store";
 import type { Session } from "../lib/types";
 import { VOICES } from "../content/voices";
@@ -49,7 +49,7 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
   const hasHome = useApp((s) => s.onboarded);
 
   const engine = useMemo(() => new Engine(session, narration), [session, narration]);
-  const bed = useMemo(() => new SoundBed(), []);
+  const bed = useMemo(() => new Music(session.scene), [session.scene]);
   const state = useSyncExternalStore(engine.subscribe, engine.getSnapshot);
   const [sheet, setSheet] = useState(false);
   const [careSeen, setCareSeen] = useState(false);
@@ -241,7 +241,7 @@ function Stage({ session, narration }: { session: Session; narration: boolean })
         </div>
 
         <div className="transport">
-          <button className="icon-btn" aria-pressed={soundBed} aria-label="Ambient sound" onClick={() => setSoundBed(!soundBed)}>
+          <button className="icon-btn" aria-pressed={soundBed} aria-label="Background music" title="Background music" onClick={() => setSoundBed(!soundBed)}>
             <Waves />
           </button>
           <button className="icon-btn" onClick={() => engine.prevSegment()} aria-label="Previous part">

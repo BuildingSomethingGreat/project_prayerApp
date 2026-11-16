@@ -19,8 +19,11 @@ const CANDIDATES: Record<VoiceId, string[]> = {
 const working: Partial<Record<VoiceId, string>> = {};
 
 const MODEL = process.env.ELEVENLABS_MODEL ?? "eleven_multilingual_v2";
-/** A breath between phrases so the pacing stays meditative. */
-const BREAK = ' <break time="0.7s" /> ';
+/**
+ * How the voice is asked to speak. Lower stability lets pitch and pace move the
+ * way a person's do; a little style adds warmth; the pace is just under natural.
+ */
+const DELIVERY = { stability: 0.4, similarity_boost: 0.8, style: 0.3, use_speaker_boost: true, speed: 0.94 };
 
 export interface SpokenSegment {
   /** Base64 MP3. */
@@ -56,12 +59,21 @@ export function canSpeak(): boolean {
   return Boolean(process.env.ELEVENLABS_API_KEY);
 }
 
-export async function speak(lines: string[], voice: VoiceId): Promise<SpokenSegment> {
-  // Record where each line begins in the joined text, to read its start time off the alignment.
+export interface SpeechContext {
+  /** What was said just before these lines, and what comes just after. Not spoken; it shapes the intonation. */
+  before?: string;
+  after?: string;
+}
+
+export async function speak(lines: string[], voice: VoiceId, context: SpeechContext = {}): Promise<SpokenSegment> {
+  // The lines are sent as one flowing passage, so the voice carries a thought
+  // across them the way a person reading aloud would. (An earlier version put
+  // a fixed pause after every line, which made the delivery choppy.) Record
+  // where each line begins, to read its start time off the alignment.
   const offsets: number[] = [];
   let text = "";
   for (const line of lines) {
-    if (text) text += BREAK;
+    if (text) text += " ";
     offsets.push(text.length);
     text += line;
   }
@@ -76,7 +88,10 @@ export async function speak(lines: string[], voice: VoiceId): Promise<SpokenSegm
       body: JSON.stringify({
         text,
         model_id: MODEL,
-        voice_settings: { stability: 0.62, similarity_boost: 0.78, style: 0.08, speed: 0.9 },
+        voice_settings: DELIVERY,
+        // Lets the model match its tone to the neighbouring segments instead of starting cold each time.
+        previous_text: context.before || undefined,
+        next_text: context.after || undefined,
       }),
     });
     if (res.ok) {
